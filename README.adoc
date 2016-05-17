@@ -1,0 +1,15 @@
+= Open Micro-DataSet Platform(开源微数据平台)
+
+image::https://img.shields.io/travis/MDataSet/mds.svg[link="https://travis-ci.org/MDataSet/mds"]
+
+== 设计理念
+
+== 功能列表
+
+== 文档
+
+http://MDataSet.github.io/mds[http://MDataSet.github.io/mds]
+
+== License
+
+Under version 2.0 of the http://www.apache.org/licenses/LICENSE-2.0[Apache License].

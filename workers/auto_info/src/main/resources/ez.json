@@ -1,0 +1,63 @@
+{
+  "ez": {
+    "app": "mds-worker",
+    "module": "autoinfo",
+    "services": {
+      "distributed": {},
+      "eventbus":{},
+      "redis": {
+        "host": "192.168.99.100",
+        "port": 6379,
+        "auth": "",
+        "db": 0
+      }
+    }
+  },
+  "args": {
+    "source": {
+      "category": "",
+      "desc": "",
+      "data_source": "",
+      "collect_exec_schedule": "",
+      "collect_test_schedule": "",
+      "collect_auth": {
+        "user_name": "",
+        "password": "",
+        "account_token": "",
+        "ssh_key": ""
+      },
+      "query_push_resp_format": [
+        {
+          "field": "",
+          "default_value": "",
+          "data_type": "",
+          "desc": "",
+          "necessary": ""
+        }
+      ],
+      "query_pull_req_format": [
+        {
+          "field": "",
+          "default_value": "",
+          "data_type": "",
+          "desc": "",
+          "necessary": ""
+        }
+      ],
+      "query_pull_resp_format": [
+        {
+          "field": "",
+          "default_value": "",
+          "data_type": "",
+          "desc": "",
+          "necessary": ""
+        }
+      ],
+      "query_limit": {
+        "hourly_rate": 0
+      },
+      "ext_info": {
+      }
+    }
+  }
+}

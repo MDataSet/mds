@@ -1,0 +1,17 @@
+= Open Micro-DataSet Platform(开源微数据平台) Document
+MDataSet(i@sunisle.org)
+v1.0.0
+:doctype: book
+:encoding: utf-8
+:lang: zh-CN
+:toc: left
+:toclevels: 3
+:numbered:
+
+include::README.adoc[]
+
+include::CONTRIBUTING.adoc[]
+
+include::ROADMAP.adoc[]
+
+include::CHANGELOG.adoc[]

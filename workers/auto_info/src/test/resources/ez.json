@@ -1,0 +1,35 @@
+{
+  "ez": {
+    "app": "mds",
+    "module": "startup",
+    "language": "zh-CN",
+    "services": {
+      "rpc.http": {
+        "servicePath": "com.mdataset.startup.api",
+        "host": "0.0.0.0",
+        "port": 8080,
+        "monitor": {
+          "slow": {
+            "time": 1000
+          }
+        }
+      },
+      "rpc.websocket": {
+        "servicePath": "com.mdataset.startup.api",
+        "host": "0.0.0.0",
+        "port": 8081
+      },
+      "storage.mongo": {
+        "host": "192.168.99.100",
+        "port": 27017,
+        "db_name": "mds"
+      },
+      "scheduler": {
+        "storage": "mongo"
+      },
+      "distributed": {}
+    }
+  },
+  "args": {
+  }
+}

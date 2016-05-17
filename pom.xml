@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.ecfront</groupId>
+        <artifactId>ez-parent</artifactId>
+        <version>0.1.8</version>
+    </parent>
+
+    <groupId>com.mdataset</groupId>
+    <artifactId>mds-parent</artifactId>
+    <name>Micro-DataSet POM</name>
+    <description>微数据集合 POM</description>
+    <url>https://github.com/MDataSet/mds</url>
+    <packaging>pom</packaging>
+    <version>1.0.0</version>
+
+    <scm>
+        <connection>scm:git:git@github.com:MDataSet/mds.git</connection>
+        <developerConnection>scm:git:git@github.com:MDataSet/mds.git</developerConnection>
+        <url>git@github.com:MDataSet/mds.git</url>
+    </scm>
+
+    <properties>
+        <ezf-version>3.0.0-SNAPSHOT</ezf-version>
+        <mds-version>1.0.0</mds-version>
+    </properties>
+
+    <modules>
+        <module>modules/lib_basic</module>
+        <module>modules/lib_core</module>
+        <module>modules/lib_bd</module>
+        <module>modules/runnable-pom</module>
+    </modules>
+
+    <dependencies>
+
+    </dependencies>
+
+</project>

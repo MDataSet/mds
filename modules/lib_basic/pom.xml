@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.mdataset</groupId>
+        <artifactId>mds-parent</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>mds-lib-basic</artifactId>
+    <name>Micro-DataSet lib basic</name>
+    <description>微数据集合基础类库</description>
+    <url>https://github.com/MDataSet/mds</url>
+    <packaging>jar</packaging>
+    <version>${mds-version}</version>
+
+    <scm>
+        <connection>scm:git:git@github.com:MDataSet/mds.git</connection>
+        <developerConnection>scm:git:git@github.com:MDataSet/mds.git</developerConnection>
+        <url>git@github.com:MDataSet/mds.git</url>
+    </scm>
+
+    <properties>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.ecfront</groupId>
+            <artifactId>ezf-eventbus</artifactId>
+            <version>${ezf-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ecfront</groupId>
+            <artifactId>ezf-distributed</artifactId>
+            <version>${ezf-version}</version>
+        </dependency>
+    </dependencies>
+
+</project>
