@@ -6,7 +6,7 @@ import com.mdataset.worker.autoinfo.CollectProcessor
 class CollectSpec extends MdsBasicCollectSpec {
 
   test("collect test") {
-    CollectProcessor.collect()
+    CollectProcessor.collectModel()
   }
 
 }

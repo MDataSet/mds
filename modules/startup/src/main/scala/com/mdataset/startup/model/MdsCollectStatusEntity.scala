@@ -13,6 +13,9 @@ class MdsCollectStatusEntity extends BaseModel {
   @Index
   @BeanProperty var code: String = _
 
+  @Index
+  @BeanProperty var item_code: String = _
+
   @BeanProperty var status: Boolean = _
 
   @BeanProperty var last_update_time: String = _
@@ -23,12 +26,14 @@ class MdsCollectStatusEntity extends BaseModel {
 
 object MdsCollectStatusEntity extends MongoBaseStorage[MdsCollectStatusEntity] {
 
-  def getByCode(code: String): MdsCollectStatusEntity = {
-    MdsCollectStatusEntity.getByCond(s"""{"code":"$code"}""").body
+  def getByCode(code: String, itemCode: String): MdsCollectStatusEntity = {
+    MdsCollectStatusEntity.getByCond(s"""{"code":"$code","item_code":"$itemCode"}""").body
   }
 
   implicit def toVO(entity: MdsCollectStatusEntity): MdsCollectStatusDTO = {
     val vo = new MdsCollectStatusDTO
+    vo.code = entity.code
+    vo.item_code = entity.item_code
     vo.last_update_time = TimeHelper.msf.parse(entity.last_update_time)
     vo.info = entity.info
     vo

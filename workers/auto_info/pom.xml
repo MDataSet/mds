@@ -12,7 +12,7 @@
     </parent>
 
     <artifactId>mds-worker-auto_info</artifactId>
-    <name>Micro-DataSet Worker Auto INfo</name>
+    <name>Micro-DataSet Worker Auto Info</name>
     <description>微数据集合汽车数据采集</description>
     <url>https://github.com/MDataSet/mds</url>
     <packaging>jar</packaging>

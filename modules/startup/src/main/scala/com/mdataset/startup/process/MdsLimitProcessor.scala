@@ -3,7 +3,7 @@ package com.mdataset.startup.process
 import com.ecfront.common.Resp
 import com.ecfront.ez.framework.core.EZContext
 import com.ecfront.ez.framework.service.distributed.DCounterService
-import com.mdataset.lib.basic.model.MdsSourceDTO
+import com.mdataset.lib.basic.model.MdsSourceItemDTO
 import io.vertx.core.Handler
 
 object MdsLimitProcessor {
@@ -12,16 +12,16 @@ object MdsLimitProcessor {
   private val FLAG_LIMIT = "__mds_limit_"
   private val counters = collection.mutable.Map[String, DCounterService]()
 
-  def addCounter(source: MdsSourceDTO): Unit = {
-    counters -= source.code
-    if (source.query_limit != null && source.query_limit.hourly_rate != 0) {
-      counters += source.code -> DCounterService(FLAG_LIMIT + source.code)
+  def addCounter(code: String, item: MdsSourceItemDTO): Unit = {
+    counters -= code + "_" + item.item_code
+    if (item.query_limit != null && item.query_limit.hourly_rate != 0) {
+      counters += code + "_" + item.item_code -> DCounterService(FLAG_LIMIT + code + "_" + item.item_code)
     }
   }
 
-  def limitFilter(source: MdsSourceDTO): Resp[Void] = {
-    if (source.query_limit != null && source.query_limit.hourly_rate != 0) {
-      if (counters(source.code).inc() >= source.query_limit.hourly_rate) {
+  def limitFilter(code: String, item: MdsSourceItemDTO): Resp[Void] = {
+    if (item.query_limit != null && item.query_limit.hourly_rate != 0) {
+      if (counters(code + "_" + item.item_code).inc() >= item.query_limit.hourly_rate) {
         Resp.locked("查询过于频繁,请稍后再试.")
       } else {
         Resp.success(null)

@@ -17,16 +17,21 @@ object MdsInterfaceAPI {
 
   @GET("")
   def fetchAllInterfaces(parameter: Map[String, String], context: EZRPCContext): Resp[List[MdsSourceWithStatusVO]] = {
-    val vos=MdsContext.sources.values.map {
-      source =>
-        val vo = new MdsSourceWithStatusVO
-        BeanHelper.copyProperties(vo, source)
-        val status = MdsCollectStatusEntity.getByCode(source.code)
-        if (status != null) {
-          vo.status = status.status
-          vo.last_update_time = dateF.format(TimeHelper.msf.parse(status.last_update_time))
+    val vos = MdsContext.sources.flatMap {
+      items =>
+        val code = items._1
+        items._2.values.map {
+          item =>
+            val vo = new MdsSourceWithStatusVO
+            BeanHelper.copyProperties(vo, item)
+            val status = MdsCollectStatusEntity.getByCode(code, item.item_code)
+            if (status != null) {
+              vo.code = code
+              vo.status = status.status
+              vo.last_update_time = dateF.format(TimeHelper.msf.parse(status.last_update_time))
+            }
+            vo
         }
-        vo
     }.toList
     Resp.success(vos)
   }

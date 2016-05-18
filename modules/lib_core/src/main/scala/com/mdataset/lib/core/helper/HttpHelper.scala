@@ -18,24 +18,29 @@ object HttpHelper extends LazyLogging {
 
   val httpClient: CloseableHttpClient = HttpClients.createDefault
 
-  def post(url: String, body: AnyRef, header: Map[String, String] = Map())(implicit contentType: String = "application/json; charset=utf-8"): String = {
-    execute(new HttpPost(url), body, header, contentType)
+  def post(url: String, body: AnyRef, header: Map[String, String] = Map())
+          (implicit contentType: String = "application/json; charset=utf-8", charset: Charset.Charset = Charset.UTF8): String = {
+    execute(new HttpPost(url), body, header, contentType, charset)
   }
 
-  def put(url: String, body: AnyRef, header: Map[String, String] = Map())(implicit contentType: String = "application/json; charset=utf-8"): String = {
-    execute(new HttpPut(url), body, header, contentType)
+  def put(url: String, body: AnyRef, header: Map[String, String] = Map())
+         (implicit contentType: String = "application/json; charset=utf-8", charset: Charset.Charset = Charset.UTF8): String = {
+    execute(new HttpPut(url), body, header, contentType, charset)
   }
 
-  def get(url: String, header: Map[String, String] = Map())(implicit contentType: String = "application/json; charset=utf-8"): String = {
-    execute(new HttpGet(url), null, header, contentType)
+  def get(url: String, header: Map[String, String] = Map())
+         (implicit contentType: String = "application/json; charset=utf-8", charset: Charset.Charset = Charset.UTF8): String = {
+    execute(new HttpGet(url), null, header, contentType, charset)
   }
 
-  def delete(url: String, header: Map[String, String] = Map())(implicit contentType: String = "application/json; charset=utf-8"): String = {
-    execute(new HttpDelete(url), null, header, contentType)
+  def delete(url: String, header: Map[String, String] = Map())
+            (implicit contentType: String = "application/json; charset=utf-8", charset: Charset.Charset = Charset.UTF8): String = {
+    execute(new HttpDelete(url), null, header, contentType, charset)
   }
 
-  def upload(url: String, file: File, header: Map[String, String] = Map()): String = {
-    execute(new HttpPost(url), file, header, null)
+  def upload(url: String, file: File, header: Map[String, String] = Map())
+            (implicit contentType: String = "application/json; charset=utf-8", charset: Charset.Charset = Charset.UTF8): String = {
+    execute(new HttpPost(url), file, header, null, charset)
   }
 
   implicit def toSafe(str: String): Object {def safe: String} = new {
@@ -48,7 +53,8 @@ object HttpHelper extends LazyLogging {
     }
   }
 
-  private def execute(method: HttpRequestBase, body: AnyRef, header: Map[String, String] = Map(), contentType: String, retry: Int = 0): String = {
+  private def execute(method: HttpRequestBase, body: AnyRef,
+                      header: Map[String, String] = Map(), contentType: String, charset: Charset.Charset, retry: Int = 0): String = {
     logger.debug(s"HTTP [${method.getMethod}] request : ${method.getURI}")
     if (header != null) {
       header.foreach(h => method.addHeader(h._1, h._2))
@@ -75,13 +81,13 @@ object HttpHelper extends LazyLogging {
     }
     try {
       val response = httpClient.execute(method)
-      EntityUtils.toString(response.getEntity)
+      EntityUtils.toString(response.getEntity, charset.toString)
     } catch {
       case e if e.getClass == classOf[SocketException] || e.getClass == classOf[NoHttpResponseException] =>
         if (retry <= 5) {
           Thread.sleep(500)
           logger.warn(s"HTTP [${method.getMethod}] request  ${method.getURI} ERROR. retry [${retry + 1}] .")
-          execute(method, body, header, contentType, retry + 1)
+          execute(method, body, header, contentType, charset, retry + 1)
         } else {
           logger.warn(s"HTTP [${method.getMethod}] request : ${method.getURI} ERROR.", e)
           throw e
@@ -91,6 +97,14 @@ object HttpHelper extends LazyLogging {
         throw e
     }
   }
+}
+
+object Charset extends Enumeration {
+  type Charset = Value
+  val UTF8 = Value("utf-8")
+  val GB2312 = Value("gb2312")
+  val GB18030 = Value("gb18030")
+  val gbk = Value("gbk")
 }
 
 case class GzipDecompressingEntity(entity: HttpEntity) extends HttpEntityWrapper(entity) {

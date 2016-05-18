@@ -1,10 +1,9 @@
 package com.mdataset.startup.api.query
 
 import com.ecfront.common.Resp
-import com.ecfront.ez.framework.service.rpc.foundation.{EZRPCContext, POST, REQUEST, RPC}
+import com.ecfront.ez.framework.service.rpc.foundation._
 import com.ecfront.ez.framework.service.rpc.http.HTTP
-import com.ecfront.ez.framework.service.rpc.websocket.WebSocket
-import com.mdataset.lib.basic.MdsExchangeAPI
+import com.ecfront.ez.framework.service.rpc.websocket.{WebSocket, WebSocketMessagePushManager}
 import com.mdataset.startup.MdsContext
 import com.mdataset.startup.process.MdsLimitProcessor
 
@@ -13,21 +12,33 @@ import com.mdataset.startup.process.MdsLimitProcessor
 @WebSocket
 object MdsAPI {
 
-  @POST(":code/")
+  @POST(":code/:itemCode/")
   def pull(parameter: Map[String, String], body: Map[String, String], context: EZRPCContext): Resp[Any] = {
     val code = parameter("code")
-    val source = MdsContext.sources(code)
-    val limitR = MdsLimitProcessor.limitFilter(source)
-    if (limitR) {
-      MdsExchangeAPI.Master.queryPull(code, body)
+    val itemCode = parameter("itemCode")
+    if (MdsContext.sources.contains(code) && MdsContext.sources(code).contains(itemCode)) {
+      val item = MdsContext.sources(code)(itemCode)
+      val limitR = MdsLimitProcessor.limitFilter(code, item)
+      if (limitR) {
+        MdsContext.defaultExchangeAPI.queryPullReq(code, itemCode, body)
+      } else {
+        limitR
+      }
     } else {
-      limitR
+      Resp.notFound("请求资源不存在.")
     }
   }
 
-  @REQUEST(":code/")
+  @REQUEST(":code/:itemCode/")
   def push(parameter: Map[String, String], body: Map[String, String], context: EZRPCContext): Resp[Any] = {
-    Resp.success(null)
+    val code = parameter("code")
+    val itemCode = parameter("itemCode")
+    if (MdsContext.sources.contains(code) && MdsContext.sources(code).contains(itemCode)) {
+      Resp.success(null)
+    } else {
+      WebSocketMessagePushManager.remove(Method.REQUEST, s"/api/$code/$itemCode/")
+      Resp.notFound("请求资源不存在.")
+    }
   }
 
 }

@@ -2,9 +2,17 @@ package com.mdataset.lib.basic.model
 
 import scala.beans.BeanProperty
 
-class MdsSourceDTO {
+class MdsSourceMainDTO {
 
   @BeanProperty var code: String = _
+
+  @BeanProperty var items: List[MdsSourceItemDTO] = _
+
+}
+
+class MdsSourceItemDTO {
+
+  @BeanProperty var item_code: String = _
 
   @BeanProperty var category: String = _
 
@@ -29,4 +37,5 @@ class MdsSourceDTO {
   @BeanProperty var ext_info: Map[String, String] = _
 
 }
+
 

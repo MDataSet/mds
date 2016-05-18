@@ -4,7 +4,7 @@
     "module": "autoinfo",
     "services": {
       "distributed": {},
-      "eventbus":{},
+      "eventbus": {},
       "redis": {
         "host": "192.168.99.100",
         "port": 6379,
@@ -15,49 +15,85 @@
   },
   "args": {
     "source": {
-      "category": "",
-      "desc": "",
-      "data_source": "",
-      "collect_exec_schedule": "",
-      "collect_test_schedule": "",
+      "category": "auto",
+      "data_source": "autohome.com.cn",
       "collect_auth": {
         "user_name": "",
         "password": "",
         "account_token": "",
         "ssh_key": ""
       },
-      "query_push_resp_format": [
-        {
-          "field": "",
-          "default_value": "",
-          "data_type": "",
-          "desc": "",
-          "necessary": ""
-        }
-      ],
-      "query_pull_req_format": [
-        {
-          "field": "",
-          "default_value": "",
-          "data_type": "",
-          "desc": "",
-          "necessary": ""
-        }
-      ],
-      "query_pull_resp_format": [
-        {
-          "field": "",
-          "default_value": "",
-          "data_type": "",
-          "desc": "",
-          "necessary": ""
-        }
-      ],
       "query_limit": {
         "hourly_rate": 0
       },
       "ext_info": {
-      }
+      },
+      "collect_exec_schedule": "0 0 0 /1 * ?",
+      "collect_test_schedule": "0 0 0 /10 * ?",
+      "items": [
+        {
+          "item_code": "model",
+          "desc": "车型数据",
+          "query_push_resp_format": [
+            {
+              "field": "",
+              "default_value": "",
+              "data_type": "",
+              "desc": "",
+              "necessary": ""
+            }
+          ],
+          "query_pull_req_format": [
+            {
+              "field": "",
+              "default_value": "",
+              "data_type": "",
+              "desc": "",
+              "necessary": ""
+            }
+          ],
+          "query_pull_resp_format": [
+            {
+              "field": "",
+              "default_value": "",
+              "data_type": "",
+              "desc": "",
+              "necessary": ""
+            }
+          ]
+        },
+        {
+          "item_code": "dealer",
+          "desc": "经销商数据",
+          "query_push_resp_format": [
+            {
+              "field": "",
+              "default_value": "",
+              "data_type": "",
+              "desc": "",
+              "necessary": ""
+            }
+          ],
+          "query_pull_req_format": [
+            {
+              "field": "",
+              "default_value": "",
+              "data_type": "",
+              "desc": "",
+              "necessary": ""
+            }
+          ],
+          "query_pull_resp_format": [
+            {
+              "field": "",
+              "default_value": "",
+              "data_type": "",
+              "desc": "",
+              "necessary": ""
+            }
+          ]
+        }
+      ]
     }
   }
 }
