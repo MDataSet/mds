@@ -1,6 +1,7 @@
 package com.mdataset.worker.autoinfo
 
 import com.ecfront.common.{JsonHelper, Resp}
+import com.mdataset.lib.core.MdsContext
 import com.mdataset.lib.core.helper.{Charset, HttpHelper}
 import com.mdataset.worker.autoinfo.model.ModelAutoInfo
 import com.typesafe.scalalogging.slf4j.LazyLogging
@@ -15,19 +16,21 @@ object CollectProcessor extends LazyLogging {
   private implicit val context = "text/html; charset=gb2312"
   private implicit val charset = Charset.GB2312
 
+  val ITEM_CODE_MODEL: String = "model"
+
   def collectModel(): Resp[Void] = {
-    val modelAutoInfos = ('A' to 'Z').flatMap {
+    ('A' to 'Z').foreach {
       i =>
         // 1. 品牌分类列表，例如：autohome.com.cn/grade/carhtml/B.html
         val brandHtml = HttpHelper.get(baseUrl + s"grade/carhtml/$i.html")
-        Jsoup.parse(brandHtml).select("dl").flatMap {
+        Jsoup.parse(brandHtml).select("dl").foreach {
           $brand =>
             val brandName = $brand.select("dt").text()
             // val brandImage = $brand.find("dt img").attr("src")
-            $brand.select("dd").map {
+            $brand.select("dd").foreach {
               $company =>
                 val companyName = $company.select(".h3-tit").text()
-                $company.select("li:has(h4)").flatMap {
+                val seriesObjects = $company.select("li:has(h4)").flatMap {
                   $series =>
                     val seriesId = $series.attr("id").replace("s", "")
                     val seriesName = $series.select("h4").text()
@@ -254,12 +257,11 @@ object CollectProcessor extends LazyLogging {
                         }
                         modelAutoInfo
                     }
-                }
+                }.toList
+                MdsContext.defaultExchangeDataAPI.insert(ITEM_CODE_MODEL, seriesObjects)
             }
         }
     }
-    // TODO save
-    println("save it.")
     Resp.success(null)
   }
 
@@ -314,7 +316,7 @@ object CollectProcessor extends LazyLogging {
     new java.lang.Long(formatStrToNumber(str))
   }
 
-  def formatStrToNumber(str:String):String={
+  def formatStrToNumber(str: String): String = {
     str.trim match {
       case "" => "0"
       case "未知" => "0"

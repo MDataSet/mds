@@ -4,22 +4,6 @@ import com.mdataset.lib.core.model.MdsIdModel
 
 import scala.beans.BeanProperty
 
-/*class AutoInfoDTO extends IdModel {
-  @BeanProperty var brand_name: String = _
-  @BeanProperty var brand_image: String = _
-  @BeanProperty var company_auto_info: List[CompanyAutoInfoDTO] = _
-}
-
-class CompanyAutoInfoDTO {
-  @BeanProperty var company_name: String = _
-  @BeanProperty var series_auto_info: List[SeriesAutoInfoDTO] = _
-
-}
-
-class SeriesAutoInfoDTO {
-  @BeanProperty var series_name: String = _
-}*/
-
 class ModelAutoInfo extends MdsIdModel {
   @BeanProperty var brand_name: String = _
   @BeanProperty var company_name: String = _

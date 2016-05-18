@@ -11,7 +11,7 @@ object ServiceAdapter extends MdsAdapter {
   override def collectExec(itemCode: String, source: MdsSourceItemDTO, status: MdsCollectStatusDTO): Resp[MdsCollectStatusDTO] = {
     status.last_update_time = new Date()
     val resp = itemCode match {
-      case "model" => CollectProcessor.collectModel()
+      case CollectProcessor.ITEM_CODE_MODEL => CollectProcessor.collectModel()
     }
     if (resp) {
       Resp.success(status)

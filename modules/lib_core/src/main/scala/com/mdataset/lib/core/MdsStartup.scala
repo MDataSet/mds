@@ -34,11 +34,11 @@ object MdsStartup extends App with LazyLogging {
       if (MdsContext.source != null) {
         val initR = MdsContext.adapter.init(MdsContext.source)
         if (initR) {
-          MdsContext.defaultExchangeAPI.registerReq(MdsContext.source)
-          MdsContext.defaultExchangeAPI.collectExecResp(MdsContext.source.code)
-          MdsContext.defaultExchangeAPI.collectTestResp(MdsContext.source.code)
-          MdsContext.defaultExchangeAPI.queryPullResp(MdsContext.source.code)
-          MdsContext.defaultExchangeAPI.queryPushReq()
+          MdsContext.defaultExchangeWorkerAPI.registerReq(MdsContext.source)
+          MdsContext.defaultExchangeWorkerAPI.collectExecResp(MdsContext.source.code)
+          MdsContext.defaultExchangeWorkerAPI.collectTestResp(MdsContext.source.code)
+          MdsContext.defaultExchangeWorkerAPI.queryPullResp(MdsContext.source.code)
+          MdsContext.defaultExchangeWorkerAPI.queryPushReq()
           DMonitorService.start()
           logger.info(s"${EZContext.module} started.")
         } else {
@@ -81,7 +81,7 @@ object MdsStartup extends App with LazyLogging {
   sys.addShutdownHook {
     val shutdownR = MdsContext.adapter.shutdown(MdsContext.source)
     if (shutdownR) {
-      MdsContext.defaultExchangeAPI.unRegisterReq(MdsContext.source.code)
+      MdsContext.defaultExchangeWorkerAPI.unRegisterReq(MdsContext.source.code)
       logger.info(s"${EZContext.module} shutdown.")
     } else {
       logger.error(s"${EZContext.module} shutdown error [${shutdownR.code}] ${shutdownR.message}.")
