@@ -4,7 +4,7 @@ import java.util.Date
 
 import com.ecfront.common.Resp
 import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceItemDTO}
-import com.mdataset.lib.core.MdsAdapter
+import com.mdataset.lib.core.{MdsAdapter, MdsContext}
 
 object ServiceAdapter extends MdsAdapter {
 
@@ -30,7 +30,8 @@ object ServiceAdapter extends MdsAdapter {
   }
 
   override def queryPull(itemCode: String, query: Map[String, String], source: MdsSourceItemDTO): Resp[Any] = {
-    Resp.success(query)
+    // TODO
+    MdsContext.defaultExchangeDataAPI.queryBySql("","",Map())
   }
 
 }
