@@ -6,19 +6,7 @@ import com.mdataset.lib.worker.basic.MdsContext
 import com.typesafe.scalalogging.slf4j.LazyLogging
 
 
-trait MdsExchangeWorkerAPI extends LazyLogging {
-
-  def registerReq(source: MdsSourceMainDTO): Unit = {
-    fetchRegisterReq(source)
-  }
-
-  protected def fetchRegisterReq(source: MdsSourceMainDTO): Resp[Void]
-
-  def unRegisterReq(code: String): Unit = {
-    fetchUnRegisterReq(code)
-  }
-
-  protected def fetchUnRegisterReq(code: String): Resp[Void]
+trait MdsAPIExchangeWorker extends MdsExchangeWorker {
 
   def collectExecResp(code: String): Unit = {
     fetchCollectExecResp(code, {

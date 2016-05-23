@@ -14,7 +14,7 @@ object MdsCollectTestScheduleJob extends ScheduleJob {
   override def execute(scheduler: EZ_Scheduler): Resp[Void] = {
     val code = scheduler.parameters("code").asInstanceOf[String]
     val itemCode = scheduler.parameters("itemCode").asInstanceOf[String]
-    MdsContext.defaultExchangeAPI.collectTestReq(code, itemCode, {
+    MdsContext.defaultAPIExchangeMaster.collectTestReq(code, itemCode, {
       resp =>
         if (!resp) {
           var status = MdsCollectStatusEntity.getByCode(code, itemCode)

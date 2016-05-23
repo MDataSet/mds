@@ -8,7 +8,7 @@ import com.mdataset.service.api.MdsContext
 import com.mdataset.service.api.process.{MdsCollectExecScheduleJob, MdsLimitProcessor}
 import com.typesafe.scalalogging.slf4j.LazyLogging
 
-trait MdsExchangeMasterAPI extends LazyLogging {
+trait MdsAPIExchangeMaster extends LazyLogging {
 
   def registerResp(): Unit = {
     fetchRegisterResp({

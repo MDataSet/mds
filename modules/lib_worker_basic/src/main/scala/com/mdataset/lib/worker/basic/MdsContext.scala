@@ -1,14 +1,14 @@
 package com.mdataset.lib.worker.basic
 
 import com.mdataset.lib.basic.model.MdsSourceMainDTO
-import com.mdataset.lib.worker.basic.exchange.{MdsEBExchangeWorkerAPI, MdsKafkaExchangeDataAPI}
+import com.mdataset.lib.worker.basic.exchange.{MdsEBAPIExchangeWorker, MdsKafkaDataExchangeWorker}
 
 object MdsContext {
 
   var adapter: MdsAdapter = _
   var source: MdsSourceMainDTO = _
 
-  val defaultExchangeWorkerAPI = MdsEBExchangeWorkerAPI
-  val defaultExchangeDataAPI = MdsKafkaExchangeDataAPI
+  val defaultAPIExchangeWorker = MdsEBAPIExchangeWorker
+  val defaultDataExchangeWorker = MdsKafkaDataExchangeWorker
 
 }

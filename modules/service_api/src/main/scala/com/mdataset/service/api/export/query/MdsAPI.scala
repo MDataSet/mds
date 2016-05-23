@@ -20,7 +20,7 @@ object MdsAPI {
       val item = MdsContext.sources(code)(itemCode)
       val limitR = MdsLimitProcessor.limitFilter(code, item)
       if (limitR) {
-        MdsContext.defaultExchangeAPI.queryPullReq(code, itemCode, body)
+        MdsContext.defaultAPIExchangeMaster.queryPullReq(code, itemCode, body)
       } else {
         limitR
       }

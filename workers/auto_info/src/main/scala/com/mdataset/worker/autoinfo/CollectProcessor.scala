@@ -258,7 +258,7 @@ object CollectProcessor extends LazyLogging {
                         modelAutoInfo
                     }
                 }.toList
-                MdsContext.defaultExchangeDataAPI.insert(ITEM_CODE_MODEL, seriesObjects)
+                MdsContext.defaultDataExchangeWorker.insert(ITEM_CODE_MODEL, seriesObjects)
             }
         }
     }

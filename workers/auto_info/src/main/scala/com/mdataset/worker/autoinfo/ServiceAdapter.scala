@@ -31,7 +31,7 @@ object ServiceAdapter extends MdsAdapter {
 
   override def queryPull(itemCode: String, query: Map[String, String], source: MdsSourceItemDTO): Resp[Any] = {
     // TODO
-    MdsContext.defaultExchangeDataAPI.queryBySql("", "", Map())
+    MdsContext.defaultDataExchangeWorker.queryBySqlReq("", "", Map())
   }
 
 }
