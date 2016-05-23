@@ -1,6 +1,6 @@
 package com.mdataset.worker.autoinfo.model
 
-import com.mdataset.lib.core.model.MdsIdModel
+import com.mdataset.lib.worker.basic.model.MdsIdModel
 
 import scala.beans.BeanProperty
 

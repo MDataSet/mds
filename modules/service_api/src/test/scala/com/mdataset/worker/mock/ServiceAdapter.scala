@@ -1,23 +1,16 @@
-package com.mdataset.worker.autoinfo
+package com.mdataset.worker.mock
 
 import java.util.Date
 
 import com.ecfront.common.Resp
 import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceItemDTO}
-import com.mdataset.lib.worker.basic.{MdsAdapter, MdsContext}
+import com.mdataset.lib.worker.basic.MdsAdapter
 
 object ServiceAdapter extends MdsAdapter {
 
   override def collectExec(itemCode: String, source: MdsSourceItemDTO, status: MdsCollectStatusDTO): Resp[MdsCollectStatusDTO] = {
     status.last_update_time = new Date()
-    val resp = itemCode match {
-      case CollectProcessor.ITEM_CODE_MODEL => CollectProcessor.collectModel()
-    }
-    if (resp) {
-      Resp.success(status)
-    } else {
-      resp
-    }
+    Resp.success(status)
   }
 
   override def collectTest(itemCode: String, source: MdsSourceItemDTO): Resp[Void] = {
@@ -30,8 +23,7 @@ object ServiceAdapter extends MdsAdapter {
   }
 
   override def queryPull(itemCode: String, query: Map[String, String], source: MdsSourceItemDTO): Resp[Any] = {
-    // TODO
-    MdsContext.defaultExchangeDataAPI.queryBySql("", "", Map())
+    Resp.success(s"""{"t":1}""")
   }
 
 }

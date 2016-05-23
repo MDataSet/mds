@@ -6,14 +6,14 @@
 
     <parent>
         <groupId>com.mdataset</groupId>
-        <artifactId>mds-runnable-parent</artifactId>
+        <artifactId>mds-parent</artifactId>
         <version>1.0.0</version>
-        <relativePath>../../modules/runnable-pom/pom.xml</relativePath>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>mds-worker-auto_info</artifactId>
-    <name>Micro-DataSet Worker Auto Info</name>
-    <description>微数据集合汽车数据采集</description>
+    <artifactId>mds-service-bd</artifactId>
+    <name>Micro-DataSet bd service</name>
+    <description>微数据集合大数据服务</description>
     <url>https://github.com/MDataSet/mds</url>
     <packaging>jar</packaging>
     <version>${mds-version}</version>
@@ -25,13 +25,19 @@
     </scm>
 
     <properties>
+        <mainClass>com.mdataset.service.bd.MdsStartup</mainClass>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.mdataset</groupId>
-            <artifactId>mds-lib-worker-basic</artifactId>
+            <artifactId>mds-lib-basic</artifactId>
             <version>${mds-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ecfront</groupId>
+            <artifactId>ezf-kafka</artifactId>
+            <version>${ezf-version}</version>
         </dependency>
     </dependencies>
 

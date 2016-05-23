@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.mdataset</groupId>
+        <artifactId>mds-runnable-parent</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../runnable-pom/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>mds-service-api</artifactId>
+    <name>Micro-DataSet API service</name>
+    <description>微数据集合API服务</description>
+    <url>https://github.com/MDataSet/mds</url>
+    <packaging>jar</packaging>
+    <version>${mds-version}</version>
+
+    <scm>
+        <connection>scm:git:git@github.com:MDataSet/mds.git</connection>
+        <developerConnection>scm:git:git@github.com:MDataSet/mds.git</developerConnection>
+        <url>git@github.com:MDataSet/mds.git</url>
+    </scm>
+
+    <properties>
+        <mainClass>com.mdataset.service.api.MdsStartup</mainClass>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.mdataset</groupId>
+            <artifactId>mds-lib-basic</artifactId>
+            <version>${mds-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ecfront</groupId>
+            <artifactId>ezf-storage-mongo</artifactId>
+            <version>${ezf-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ecfront</groupId>
+            <artifactId>ezf-rpc-http</artifactId>
+            <version>${ezf-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ecfront</groupId>
+            <artifactId>ezf-rpc-websocket</artifactId>
+            <version>${ezf-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ecfront</groupId>
+            <artifactId>ezf-scheduler</artifactId>
+            <version>${ezf-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mdataset</groupId>
+            <artifactId>mds-lib-worker-basic</artifactId>
+            <version>${mds-version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

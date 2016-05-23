@@ -31,8 +31,7 @@
 
     <modules>
         <module>modules/lib_basic</module>
-        <module>modules/lib_core</module>
-        <module>modules/lib_bd</module>
+        <module>modules/lib_worker_basic</module>
         <module>modules/runnable-pom</module>
     </modules>
 

@@ -30,7 +30,8 @@
     </properties>
 
     <modules>
-        <module>../startup</module>
+        <module>../service_api</module>
+        <module>../service_bd</module>
         <module>../../workers/auto_info</module>
     </modules>
 
