@@ -11,7 +11,7 @@ image::https://img.shields.io/travis/MDataSet/mds.svg[link="https://travis-ci.or
 
 == 架构设计
 
-image::docs/images/architecture.png[]
+image::docs/images/architecture.png[Architecture]
 
 . 可扩展：数据处理、存储及查询基于主流大数据技术，可方便地实现扩展及伸缩
 . 简单：框架实现了各类复杂处理，让数据开发更聚焦业务实现
