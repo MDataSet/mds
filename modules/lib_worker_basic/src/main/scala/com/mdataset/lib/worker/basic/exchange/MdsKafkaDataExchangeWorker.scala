@@ -3,16 +3,16 @@ package com.mdataset.lib.worker.basic.exchange
 import com.ecfront.common.{JsonHelper, Resp}
 import com.ecfront.ez.framework.service.eventbus.EventBusProcessor
 import com.ecfront.ez.framework.service.kafka.KafkaProcessor
-import com.ecfront.ez.framework.service.kafka.KafkaProcessor.Producer
 import com.mdataset.lib.basic.BasicContext
-import com.mdataset.lib.basic.model.{MdsSourceMainDTO, QuerySqlReq}
+import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsQuerySqlReqDTO, MdsRegisterReqDTO, MdsSourceMainDTO}
 import com.mdataset.lib.worker.basic.MdsContext
 
 object MdsKafkaDataExchangeWorker extends MdsDataExchangeWorker {
 
-  private val producers = collection.mutable.Map[String, collection.mutable.Map[String, Producer]]()
+  private val insertProducer = KafkaProcessor.Producer(BasicContext.FLAG_DATA_INSERT + MdsContext.source.code, MdsContext.source.code)
+  private val querySqlReqProducer = KafkaProcessor.Producer(BasicContext.FLAG_DATA_QUERY_SQL_REQ + MdsContext.source.code, MdsContext.source.code)
 
-  override protected def fetchRegisterReq(source: MdsSourceMainDTO): Resp[Void] = {
+  override protected def fetchRegisterReq(source: MdsRegisterReqDTO): Resp[Void] = {
     EventBusProcessor.send(BasicContext.FLAG_DATA_REGISTER, source)
     Resp.success(null)
   }
@@ -22,38 +22,20 @@ object MdsKafkaDataExchangeWorker extends MdsDataExchangeWorker {
     Resp.success(null)
   }
 
-  override protected def fetchInsert(itemCode: String, lines: List[Any]): Resp[Void] = {
-    val producer = createAndGetProducer(itemCode, BasicContext.FLAG_DATA_INSERT)
-    if (lines != null) {
-      lines.foreach {
-        line =>
-          producer.send(JsonHelper.toJsonString(line))
-      }
-      Resp.success(null)
-    } else {
-      Resp.success(null)
-    }
+  override protected def fetchInsert(tableName: String, items: List[String]): Resp[Void] = {
+    insertProducer.send(JsonHelper.toJsonString(MdsInsertReqDTO(tableName, items)))
+    Resp.success(null)
   }
 
-  override protected def fetchQueryBySqlReq(itemCode: String, sql: String, parameters: Map[String, Any]): Resp[List[String]] = {
-    val producer = createAndGetProducer(itemCode, BasicContext.FLAG_DATA_QUERY_SQL_REQ)
-    val result = producer.ack(JsonHelper.toJsonString(QuerySqlReq(sql, parameters)), BasicContext.FLAG_DATA_QUERY_SQL_RESP + MdsContext.source.code + "_" + itemCode)
+  override protected def fetchQueryBySqlReq(sql: String, parameters: List[Any]): Resp[List[String]] = {
+    val result = querySqlReqProducer.ack(
+      JsonHelper.toJsonString(MdsQuerySqlReqDTO(sql, parameters)),
+      BasicContext.FLAG_DATA_QUERY_SQL_RESP + MdsContext.source.code)
     if (result) {
       Resp.success(JsonHelper.toObject[List[String]](result.body))
     } else {
       result
     }
-  }
-
-  private def createAndGetProducer(itemCode: String, topicPrefix: String): Producer = {
-    if (!producers.contains(itemCode)) {
-      producers += itemCode -> collection.mutable.Map[String, Producer]()
-    }
-    if (!producers(itemCode).contains(topicPrefix)) {
-      producers(itemCode) +=
-        topicPrefix -> KafkaProcessor.Producer(topicPrefix + MdsContext.source.code + "_" + itemCode, MdsContext.source.code + "_" + itemCode)
-    }
-    producers(itemCode)(topicPrefix)
   }
 
 }

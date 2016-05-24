@@ -6,14 +6,14 @@ import com.ecfront.ez.framework.service.eventbus.EventBusProcessor
 import com.ecfront.ez.framework.service.kafka.KafkaProcessor
 import com.ecfront.ez.framework.service.kafka.KafkaProcessor.Producer
 import com.mdataset.lib.basic.BasicContext
-import com.mdataset.lib.basic.model.MdsSourceMainDTO
+import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsQuerySqlReqDTO, MdsRegisterReqDTO}
 
 object MdsKafkaDataExchangeMaster extends MdsDataExchangeMaster {
 
   private val producers = collection.mutable.Map[String, collection.mutable.Map[String, Producer]]()
 
-  override protected def fetchRegisterResp(fun: MdsSourceMainDTO => Resp[Void]): Unit = {
-    EventBusProcessor.Async.consumerAdv[MdsSourceMainDTO](BasicContext.FLAG_DATA_REGISTER, {
+  override protected def fetchRegisterResp(fun: MdsRegisterReqDTO => Resp[Void]): Unit = {
+    EventBusProcessor.Async.consumerAdv[MdsRegisterReqDTO](BasicContext.FLAG_DATA_REGISTER, {
       (source, reply) =>
         reply(fun(source))
     })
@@ -26,35 +26,34 @@ object MdsKafkaDataExchangeMaster extends MdsDataExchangeMaster {
     })
   }
 
-  override protected def fetchInsert(code: String, itemCode: String, callback: List[String] => Resp[Void]): Unit = {
-    KafkaProcessor.Consumer(BasicContext.FLAG_DATA_INSERT + code + "_" + itemCode, EZContext.module).receive({
+  override protected def fetchInsert(code: String, callback: MdsInsertReqDTO => Resp[Void]): Unit = {
+    KafkaProcessor.Consumer(BasicContext.FLAG_DATA_INSERT + code, EZContext.module).receive({
       (message, _) =>
-        callback(JsonHelper.toObject[List[String]](message))
+        callback(JsonHelper.toObject[MdsInsertReqDTO](message))
     })
   }
 
-  override protected def fetchQueryBySqlResp(code: String, itemCode: String, callback: (String, Map[String, Any]) => Resp[Any]): Unit = {
-    val producer = createAndGetProducer(code, itemCode, BasicContext.FLAG_DATA_QUERY_SQL_RESP)
-    KafkaProcessor.Consumer(BasicContext.FLAG_DATA_QUERY_SQL_REQ + code + "_" + itemCode, EZContext.module).receive({
+  override protected def fetchQueryBySqlResp(code: String, callback: MdsQuerySqlReqDTO => Resp[Any]): Unit = {
+    val producer = createAndGetProducer(code, BasicContext.FLAG_DATA_QUERY_SQL_RESP)
+    KafkaProcessor.Consumer(BasicContext.FLAG_DATA_QUERY_SQL_REQ + code, EZContext.module).receive({
       (message, messageId) =>
-        val resp = callback(JsonHelper.toObject[List[String]](message))
+        val resp = callback(JsonHelper.toObject[MdsQuerySqlReqDTO](message))
         if (resp) {
-          producer.send(resp.body, messageId)
-        } else {
-          resp
+          producer.send(JsonHelper.toJsonString(resp.body), messageId)
         }
+        resp
     })
   }
 
-  private def createAndGetProducer(code: String, itemCode: String, topicPrefix: String): Producer = {
-    if (!producers.contains(itemCode)) {
-      producers += itemCode -> collection.mutable.Map[String, Producer]()
+  private def createAndGetProducer(code: String, topicPrefix: String): Producer = {
+    if (!producers.contains(code)) {
+      producers += code -> collection.mutable.Map[String, Producer]()
     }
-    if (!producers(itemCode).contains(topicPrefix)) {
-      producers(itemCode) +=
-        topicPrefix -> KafkaProcessor.Producer(topicPrefix + code + "_" + itemCode, EZContext.module)
+    if (!producers(code).contains(topicPrefix)) {
+      producers(code) +=
+        topicPrefix -> KafkaProcessor.Producer(topicPrefix + code, EZContext.module)
     }
-    producers(itemCode)(topicPrefix)
+    producers(code)(topicPrefix)
   }
 }
 

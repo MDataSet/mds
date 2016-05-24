@@ -7,8 +7,8 @@ import com.typesafe.scalalogging.slf4j.LazyLogging
 object MdsStartup extends App with LazyLogging {
 
   if (EZManager.start()) {
-    MdsContext.defaultAPIExchangeMaster.registerResp()
-    MdsContext.defaultAPIExchangeMaster.unRegisterResp()
+    MdsContext.apiExchangeMaster.registerResp()
+    MdsContext.apiExchangeMaster.unRegisterResp()
   }
 
 }

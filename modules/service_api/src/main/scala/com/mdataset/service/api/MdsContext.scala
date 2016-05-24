@@ -9,6 +9,6 @@ object MdsContext {
   val sources: collection.mutable.Map[String, Map[String, MdsSourceItemDTO]] = collection.mutable.Map[String, Map[String, MdsSourceItemDTO]]()
 
   // TODO config
-  val defaultAPIExchangeMaster=MdsEBAPIExchangeMaster
+  val apiExchangeMaster=MdsEBAPIExchangeMaster
 
 }

@@ -39,6 +39,12 @@
             <artifactId>ezf-kafka</artifactId>
             <version>${ezf-version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.mdataset</groupId>
+            <artifactId>mds-lib-worker-basic</artifactId>
+            <version>${mds-version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

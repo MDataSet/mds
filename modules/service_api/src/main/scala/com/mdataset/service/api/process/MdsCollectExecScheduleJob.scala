@@ -13,7 +13,7 @@ object MdsCollectExecScheduleJob extends ScheduleJob {
     val code = scheduler.parameters("code").asInstanceOf[String]
     val itemCode = scheduler.parameters("itemCode").asInstanceOf[String]
     var status = MdsCollectStatusEntity.getByCode(code, itemCode)
-    MdsContext.defaultAPIExchangeMaster.collectExecReq(status, {
+    MdsContext.apiExchangeMaster.collectExecReq(status, {
       resp =>
         if (status == null) {
           status = new MdsCollectStatusEntity

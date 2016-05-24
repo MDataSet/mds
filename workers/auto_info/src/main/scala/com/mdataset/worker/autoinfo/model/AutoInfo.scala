@@ -1,9 +1,11 @@
 package com.mdataset.worker.autoinfo.model
 
-import com.mdataset.lib.worker.basic.model.MdsIdModel
+import com.mdataset.lib.basic.model.MdsIdModel
+import com.mdataset.lib.worker.basic.annotation.Entity
 
 import scala.beans.BeanProperty
 
+@Entity()
 class ModelAutoInfo extends MdsIdModel {
   @BeanProperty var brand_name: String = _
   @BeanProperty var company_name: String = _

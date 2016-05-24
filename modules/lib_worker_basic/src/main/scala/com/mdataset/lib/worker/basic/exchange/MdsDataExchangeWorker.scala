@@ -1,23 +1,40 @@
 package com.mdataset.lib.worker.basic.exchange
 
 import com.ecfront.common.{JsonHelper, Resp}
+import com.mdataset.lib.basic.model.{MdsIdModel, MdsRegisterReqDTO}
 
 trait MdsDataExchangeWorker extends MdsExchangeWorker {
 
-  def insert(itemCode: String, lines: List[Any]): Resp[Void] = {
-    fetchInsert(itemCode, lines)
+  def registerReq(source: MdsRegisterReqDTO): Unit = {
+    fetchRegisterReq(source)
   }
 
-  protected def fetchInsert(itemCode: String, lines: List[Any]): Resp[Void]
+  protected def fetchRegisterReq(source: MdsRegisterReqDTO): Resp[Void]
 
-  def queryBySqlReq[E: Manifest](itemCode: String, sql: String, parameters: Map[String, Any]): Resp[List[E]] = {
-    val result = fetchQueryBySqlReq(itemCode, sql, parameters)
+  def insert[E <: MdsIdModel](lines: List[E]): Resp[Void] = {
+    if (lines != null) {
+      val items = lines.map {
+        line =>
+          JsonHelper.toJsonString(line)
+      }
+      val tableName = lines.head.getClass.getSimpleName
+      fetchInsert(tableName, items)
+      Resp.success(null)
+    } else {
+      Resp.success(null)
+    }
+  }
+
+  protected def fetchInsert(tableName: String, items: List[String]): Resp[Void]
+
+  def queryBySqlReq[E: Manifest](sql: String, parameters: List[Any]): Resp[List[E]] = {
+    val result = fetchQueryBySqlReq(sql, parameters)
     if (result) {
       Resp.success(result.body.map(JsonHelper.toObject[E]))
     }
     result
   }
 
-  protected def fetchQueryBySqlReq(itemCode: String, sql: String, parameters: Map[String, Any]): Resp[List[String]]
+  protected def fetchQueryBySqlReq(sql: String, parameters: List[Any]): Resp[List[String]]
 
 }

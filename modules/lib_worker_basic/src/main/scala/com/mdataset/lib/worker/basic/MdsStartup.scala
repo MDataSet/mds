@@ -1,9 +1,10 @@
 package com.mdataset.lib.worker.basic
 
-import com.ecfront.common.JsonHelper
+import com.ecfront.common.{BeanHelper, ClassScanHelper, JsonHelper}
 import com.ecfront.ez.framework.core.{EZContext, EZManager}
 import com.ecfront.ez.framework.service.distributed.DMonitorService
-import com.mdataset.lib.basic.model.{MdsCollectAuthDTO, MdsQueryLimitDTO, MdsSourceMainDTO}
+import com.mdataset.lib.basic.model._
+import com.mdataset.lib.worker.basic.annotation.{Entity, Family}
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import io.vertx.core.json.JsonObject
 
@@ -21,9 +22,10 @@ object MdsStartup extends LazyLogging {
 
   def init(serviceAdapter: MdsAdapter = null): Unit = {
     if (EZManager.start()) {
+      val basePath = s"com.mdataset.worker.${EZContext.module}"
       try {
         if (serviceAdapter != null) {
-          val adapterStr = s"com.mdataset.worker.${EZContext.module}.ServiceAdapter$$"
+          val adapterStr = s"$basePath.ServiceAdapter$$"
           MdsContext.adapter = runtimeMirror.reflectModule(runtimeMirror.staticModule(adapterStr)).instance.asInstanceOf[MdsAdapter]
         } else {
           MdsContext.adapter = serviceAdapter
@@ -42,11 +44,23 @@ object MdsStartup extends LazyLogging {
         if (MdsContext.source != null) {
           val initR = MdsContext.adapter.init(MdsContext.source)
           if (initR) {
-            MdsContext.defaultAPIExchangeWorker.registerReq(MdsContext.source)
-            MdsContext.defaultAPIExchangeWorker.collectExecResp(MdsContext.source.code)
-            MdsContext.defaultAPIExchangeWorker.collectTestResp(MdsContext.source.code)
-            MdsContext.defaultAPIExchangeWorker.queryPullResp(MdsContext.source.code)
-            MdsContext.defaultAPIExchangeWorker.queryPushReq()
+            val entities =
+              ClassScanHelper.scan[Entity](basePath).map {
+                clazz =>
+                  val tableName = clazz.getSimpleName.toLowerCase
+                  val fieldTypes = BeanHelper.findFields(clazz)
+                  val fieldFamilies = BeanHelper.findFieldAnnotations(clazz, Seq(classOf[Family])).map {
+                    item =>
+                      item.fieldName -> item.annotation.asInstanceOf[Family].name
+                  }.toMap
+                  MdsRegisterEntityMetaDTO(tableName, fieldFamilies, fieldTypes)
+              }
+            MdsContext.dataExchangeWorker.registerReq(MdsRegisterReqDTO(MdsContext.source.code, entities))
+            MdsContext.apiExchangeWorker.registerReq(MdsContext.source)
+            MdsContext.apiExchangeWorker.collectExecResp(MdsContext.source.code)
+            MdsContext.apiExchangeWorker.collectTestResp(MdsContext.source.code)
+            MdsContext.apiExchangeWorker.queryPullResp(MdsContext.source.code)
+            MdsContext.apiExchangeWorker.queryPushReq()
             DMonitorService.start()
             logger.info(s"${EZContext.module} started.")
           } else {
@@ -90,7 +104,8 @@ object MdsStartup extends LazyLogging {
   sys.addShutdownHook {
     val shutdownR = MdsContext.adapter.shutdown(MdsContext.source)
     if (shutdownR) {
-      MdsContext.defaultAPIExchangeWorker.unRegisterReq(MdsContext.source.code)
+      MdsContext.apiExchangeWorker.unRegisterReq(MdsContext.source.code)
+      MdsContext.dataExchangeWorker.unRegisterReq(MdsContext.source.code)
       logger.info(s"${EZContext.module} shutdown.")
     } else {
       logger.error(s"${EZContext.module} shutdown error [${shutdownR.code}] ${shutdownR.message}.")
