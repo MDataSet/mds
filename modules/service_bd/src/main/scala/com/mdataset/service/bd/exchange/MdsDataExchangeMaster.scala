@@ -1,11 +1,15 @@
 package com.mdataset.service.bd.exchange
 
+import java.util.concurrent.CopyOnWriteArraySet
+
 import com.ecfront.common.Resp
 import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsQuerySqlReqDTO, MdsRegisterReqDTO}
 import com.mdataset.service.bd.MdsContext
 import com.typesafe.scalalogging.slf4j.LazyLogging
 
 trait MdsDataExchangeMaster extends LazyLogging {
+
+  private val isInit = new CopyOnWriteArraySet[String]()
 
   def registerResp(): Unit = {
     fetchRegisterResp({
@@ -33,24 +37,35 @@ trait MdsDataExchangeMaster extends LazyLogging {
     })
   }
 
+
   protected def fetchUnRegisterResp(fun: String => Resp[Void]): Unit
 
   def insert(code: String): Unit = {
-    fetchInsert(code, {
-      insertReq =>
-        // TODO save
-        Resp.success(null)
-    })
+    synchronized {
+      if (!isInit.contains("insert_" + code)) {
+        fetchInsert(code, {
+          insertReq =>
+            // TODO save
+            Resp.success(null)
+        })
+        isInit.add("insert_" + code)
+      }
+    }
   }
 
   protected def fetchInsert(code: String, callback: MdsInsertReqDTO => Resp[Void]): Unit
 
   def queryBySqlResp(code: String): Unit = {
-    fetchQueryBySqlResp(code, {
-      querySqlReq =>
-        // TODO query
-        Resp.success(null)
-    })
+    synchronized {
+      if (!isInit.contains("queryBySqlResp_" + code)) {
+        fetchQueryBySqlResp(code, {
+          querySqlReq =>
+            // TODO query
+            Resp.success(s"""[{"name":"a"}]""")
+        })
+        isInit.add("queryBySqlResp_" + code)
+      }
+    }
   }
 
   protected def fetchQueryBySqlResp(code: String, callback: MdsQuerySqlReqDTO => Resp[Any]): Unit

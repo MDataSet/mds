@@ -1,7 +1,10 @@
 package com.mdataset.lib.worker.basic.exchange
 
 import com.ecfront.common.{JsonHelper, Resp}
+import com.fasterxml.jackson.databind.JsonNode
 import com.mdataset.lib.basic.model.{MdsIdModel, MdsRegisterReqDTO}
+
+import scala.collection.JavaConversions._
 
 trait MdsDataExchangeWorker extends MdsExchangeWorker {
 
@@ -30,11 +33,12 @@ trait MdsDataExchangeWorker extends MdsExchangeWorker {
   def queryBySqlReq[E: Manifest](sql: String, parameters: List[Any]): Resp[List[E]] = {
     val result = fetchQueryBySqlReq(sql, parameters)
     if (result) {
-      Resp.success(result.body.map(JsonHelper.toObject[E]))
+      Resp.success(result.body.map(JsonHelper.toObject[E]).toList)
+    }else {
+      result
     }
-    result
   }
 
-  protected def fetchQueryBySqlReq(sql: String, parameters: List[Any]): Resp[List[String]]
+  protected def fetchQueryBySqlReq(sql: String, parameters: List[Any]): Resp[JsonNode]
 
 }

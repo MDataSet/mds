@@ -66,7 +66,11 @@ object MdsStartup extends LazyLogging {
           } else {
             logger.error(s"${EZContext.module} init error [${initR.code}] ${initR.message}.")
           }
+        }else{
+          logger.error(s"${EZContext.module} not found source config.")
         }
+      }else{
+        logger.error(s"${EZContext.module} not found adapter.")
       }
     }
   }

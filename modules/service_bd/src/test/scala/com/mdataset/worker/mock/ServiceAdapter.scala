@@ -3,9 +3,11 @@ package com.mdataset.worker.mock
 import java.util.Date
 
 import com.ecfront.common.Resp
-import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsIdModel, MdsSourceItemDTO, MdsSourceMainDTO}
-import com.mdataset.lib.worker.basic.annotation.Entity
-import com.mdataset.lib.worker.basic.{MdsAdapter, MdsContext}
+import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsIdModel, MdsSourceItemDTO}
+import com.mdataset.lib.worker.basic.MdsAdapter
+import com.mdataset.lib.worker.basic.annotation.{Entity, Family}
+
+import scala.beans.BeanProperty
 
 object ServiceAdapter extends MdsAdapter {
 
@@ -27,18 +29,26 @@ object ServiceAdapter extends MdsAdapter {
     Resp.success(s"""{"t":1}""")
   }
 
-  override def init(source: MdsSourceMainDTO): Resp[Void] = {
-    MdsContext.dataExchangeWorker.insert(List(
-      Model("a", 20, enable = true),
-      Model("b", 40, enable = true),
-      Model("c", 20, enable = false)
-    ))
-    Thread.sleep(10000)
-    val result = MdsContext.dataExchangeWorker.queryBySqlReq[Model]("SELECT * FROM model WHERE age > ?", List(20))
-    println(result)
-    super.init(source)
-  }
 }
 
 @Entity()
-case class Model(name: String, age: Int, enable: Boolean) extends MdsIdModel
+class Model extends MdsIdModel {
+
+  @Family("")
+  @BeanProperty var name: String = _
+  @Family("")
+  @BeanProperty var age: Int = _
+  @Family("opt")
+  @BeanProperty var enable: Boolean = _
+
+}
+
+object Model {
+  def apply(name: String, age: Int, enable: Boolean): Model = {
+    val model = new Model()
+    model.name = name
+    model.age = age
+    model.enable = enable
+    model
+  }
+}

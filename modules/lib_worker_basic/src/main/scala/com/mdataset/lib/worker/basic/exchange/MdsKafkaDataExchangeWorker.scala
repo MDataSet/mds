@@ -3,14 +3,20 @@ package com.mdataset.lib.worker.basic.exchange
 import com.ecfront.common.{JsonHelper, Resp}
 import com.ecfront.ez.framework.service.eventbus.EventBusProcessor
 import com.ecfront.ez.framework.service.kafka.KafkaProcessor
+import com.fasterxml.jackson.databind.JsonNode
 import com.mdataset.lib.basic.BasicContext
-import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsQuerySqlReqDTO, MdsRegisterReqDTO, MdsSourceMainDTO}
+import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsQuerySqlReqDTO, MdsRegisterReqDTO}
 import com.mdataset.lib.worker.basic.MdsContext
 
 object MdsKafkaDataExchangeWorker extends MdsDataExchangeWorker {
 
-  private val insertProducer = KafkaProcessor.Producer(BasicContext.FLAG_DATA_INSERT + MdsContext.source.code, MdsContext.source.code)
-  private val querySqlReqProducer = KafkaProcessor.Producer(BasicContext.FLAG_DATA_QUERY_SQL_REQ + MdsContext.source.code, MdsContext.source.code)
+  private val insertProducer = KafkaProcessor.Producer(
+    BasicContext.FLAG_DATA_INSERT + MdsContext.source.code,
+    BasicContext.FLAG_DATA_INSERT + MdsContext.source.code)
+
+  private val querySqlReqProducer = KafkaProcessor.Producer(
+    BasicContext.FLAG_DATA_QUERY_SQL_REQ + MdsContext.source.code,
+    BasicContext.FLAG_DATA_QUERY_SQL_REQ + MdsContext.source.code)
 
   override protected def fetchRegisterReq(source: MdsRegisterReqDTO): Resp[Void] = {
     EventBusProcessor.send(BasicContext.FLAG_DATA_REGISTER, source)
@@ -27,12 +33,12 @@ object MdsKafkaDataExchangeWorker extends MdsDataExchangeWorker {
     Resp.success(null)
   }
 
-  override protected def fetchQueryBySqlReq(sql: String, parameters: List[Any]): Resp[List[String]] = {
+  override protected def fetchQueryBySqlReq(sql: String, parameters: List[Any]): Resp[JsonNode] = {
     val result = querySqlReqProducer.ack(
       JsonHelper.toJsonString(MdsQuerySqlReqDTO(sql, parameters)),
       BasicContext.FLAG_DATA_QUERY_SQL_RESP + MdsContext.source.code)
     if (result) {
-      Resp.success(JsonHelper.toObject[List[String]](result.body))
+      Resp.success(JsonHelper.toJson(result.body))
     } else {
       result
     }

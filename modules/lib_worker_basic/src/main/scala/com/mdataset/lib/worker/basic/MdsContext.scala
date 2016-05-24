@@ -8,7 +8,7 @@ object MdsContext {
   var adapter: MdsAdapter = _
   var source: MdsSourceMainDTO = _
 
-  val apiExchangeWorker = MdsEBAPIExchangeWorker
-  val dataExchangeWorker = MdsKafkaDataExchangeWorker
+  lazy val apiExchangeWorker = MdsEBAPIExchangeWorker
+  lazy val dataExchangeWorker = MdsKafkaDataExchangeWorker
 
 }

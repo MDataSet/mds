@@ -1,0 +1,20 @@
+{
+  "ez": {
+    "app": "mds",
+    "module": "bd",
+    "services": {
+      "eventbus":{},
+      "redis": {
+        "host": "192.168.99.100",
+        "port": 6379,
+        "auth": "",
+        "db": 0
+      },
+      "kafka": {
+        "brokerList": "192.168.99.100:9092"
+      }
+    }
+  },
+  "args": {
+  }
+}

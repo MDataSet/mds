@@ -1,7 +1,7 @@
 {
   "ez": {
     "app": "mds",
-    "module": "startup",
+    "module": "api",
     "services": {
       "rpc.http": {
         "servicePath": "com.mdataset.service.api.export",

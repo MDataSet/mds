@@ -1,5 +1,7 @@
 package com.mdataset.service.api.exchange
 
+import java.util.concurrent.CopyOnWriteArraySet
+
 import com.ecfront.common.Resp
 import com.ecfront.ez.framework.service.rpc.foundation.Method
 import com.ecfront.ez.framework.service.rpc.websocket.WebSocketMessagePushManager
@@ -9,6 +11,8 @@ import com.mdataset.service.api.process.{MdsCollectExecScheduleJob, MdsLimitProc
 import com.typesafe.scalalogging.slf4j.LazyLogging
 
 trait MdsAPIExchangeMaster extends LazyLogging {
+
+  private val isInit = new CopyOnWriteArraySet[String]()
 
   def registerResp(): Unit = {
     fetchRegisterResp({
@@ -56,10 +60,15 @@ trait MdsAPIExchangeMaster extends LazyLogging {
   protected def fetchCollectTestReq(code: String, itemCode: String, callback: Resp[Void] => Resp[Void]): Unit
 
   def queryPushResp(code: String, itemCode: String): Unit = {
-    fetchQueryPushResp(code, itemCode, {
-      message =>
-        WebSocketMessagePushManager.ws(Method.REQUEST, s"/api/$code/$itemCode/", message)
-    })
+    synchronized {
+      if (!isInit.contains("queryPushResp_" + code)) {
+        fetchQueryPushResp(code, itemCode, {
+          message =>
+            WebSocketMessagePushManager.ws(Method.REQUEST, s"/api/$code/$itemCode/", message)
+        })
+        isInit.contains("queryPushResp_" + code)
+      }
+    }
   }
 
   protected def fetchQueryPushResp(code: String, itemCode: String, callback: Any => Unit): Unit
