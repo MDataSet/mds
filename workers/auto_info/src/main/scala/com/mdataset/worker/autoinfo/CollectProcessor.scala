@@ -1,7 +1,7 @@
 package com.mdataset.worker.autoinfo
 
 import com.ecfront.common.{JsonHelper, Resp}
-import com.mdataset.lib.worker.basic.MdsContext
+import com.mdataset.lib.worker.basic.MdsWorkerBasicContext
 import com.mdataset.lib.worker.basic.helper.{Charset, HttpHelper}
 import com.mdataset.worker.autoinfo.model.ModelAutoInfo
 import com.typesafe.scalalogging.slf4j.LazyLogging
@@ -258,7 +258,7 @@ object CollectProcessor extends LazyLogging {
                         modelAutoInfo
                     }
                 }.toList
-                MdsContext.dataExchangeWorker.insert(seriesObjects)
+                MdsWorkerBasicContext.dataExchangeWorker.insert(seriesObjects)
             }
         }
     }

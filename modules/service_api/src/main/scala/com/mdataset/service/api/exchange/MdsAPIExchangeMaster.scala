@@ -61,12 +61,12 @@ trait MdsAPIExchangeMaster extends LazyLogging {
 
   def queryPushResp(code: String, itemCode: String): Unit = {
     synchronized {
-      if (!isInit.contains("queryPushResp_" + code)) {
+      if (!isInit.contains("queryPushResp_" + code + itemCode)) {
         fetchQueryPushResp(code, itemCode, {
           message =>
             WebSocketMessagePushManager.ws(Method.REQUEST, s"/api/$code/$itemCode/", message)
         })
-        isInit.contains("queryPushResp_" + code)
+        isInit.contains("queryPushResp_" + code + itemCode)
       }
     }
   }

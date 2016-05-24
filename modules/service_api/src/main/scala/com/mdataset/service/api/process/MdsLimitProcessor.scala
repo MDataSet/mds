@@ -14,14 +14,14 @@ object MdsLimitProcessor {
 
   def addCounter(code: String, item: MdsSourceItemDTO): Unit = {
     counters -= code + "_" + item.item_code
-    if (item.query_limit != null && item.query_limit.hourly_rate != 0) {
+    if (item.query_limit != null && item.query_limit.hourly_max_times != 0) {
       counters += code + "_" + item.item_code -> DCounterService(FLAG_LIMIT + code + "_" + item.item_code)
     }
   }
 
   def limitFilter(code: String, item: MdsSourceItemDTO): Resp[Void] = {
-    if (item.query_limit != null && item.query_limit.hourly_rate != 0) {
-      if (counters(code + "_" + item.item_code).inc() >= item.query_limit.hourly_rate) {
+    if (item.query_limit != null && item.query_limit.hourly_max_times != 0) {
+      if (counters(code + "_" + item.item_code).inc() >= item.query_limit.hourly_max_times) {
         Resp.locked("查询过于频繁,请稍后再试.")
       } else {
         Resp.success(null)

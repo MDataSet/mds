@@ -14,6 +14,9 @@ import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
 import org.apache.http.{HttpEntity, HttpHeaders, NameValuePair, NoHttpResponseException}
 
+/**
+  * HTTP请求辅助类
+  */
 object HttpHelper extends LazyLogging {
 
   val httpClient: CloseableHttpClient = HttpClients.createDefault
@@ -43,6 +46,12 @@ object HttpHelper extends LazyLogging {
     execute(new HttpPost(url), file, header, null, charset)
   }
 
+  /**
+    * 过滤有注入隐患的HTML标记
+    *
+    * @param str 原HTML内容
+    * @return 安全的HTML内容
+    */
   implicit def toSafe(str: String): Object {def safe: String} = new {
     def safe = {
       if (str != null && str.nonEmpty) {
@@ -84,6 +93,7 @@ object HttpHelper extends LazyLogging {
       EntityUtils.toString(response.getEntity, charset.toString)
     } catch {
       case e if e.getClass == classOf[SocketException] || e.getClass == classOf[NoHttpResponseException] =>
+        // 同络错误重试5次
         if (retry <= 5) {
           Thread.sleep(500)
           logger.warn(s"HTTP [${method.getMethod}] request  ${method.getURI} ERROR. retry [${retry + 1}] .")
@@ -99,6 +109,9 @@ object HttpHelper extends LazyLogging {
   }
 }
 
+/**
+  * 网页编码
+  */
 object Charset extends Enumeration {
   type Charset = Value
   val UTF8 = Value("utf-8")
@@ -107,6 +120,11 @@ object Charset extends Enumeration {
   val gbk = Value("gbk")
 }
 
+/**
+  * Gzip压缩装饰器
+  *
+  * @param entity 返回的http实体
+  */
 case class GzipDecompressingEntity(entity: HttpEntity) extends HttpEntityWrapper(entity) {
 
   override def getContent: InputStream = {

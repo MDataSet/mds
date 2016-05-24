@@ -26,23 +26,23 @@ object MdsStartup extends LazyLogging {
       try {
         if (serviceAdapter != null) {
           val adapterStr = s"$basePath.ServiceAdapter$$"
-          MdsContext.adapter = runtimeMirror.reflectModule(runtimeMirror.staticModule(adapterStr)).instance.asInstanceOf[MdsAdapter]
+          MdsWorkerBasicContext.adapter = runtimeMirror.reflectModule(runtimeMirror.staticModule(adapterStr)).instance.asInstanceOf[MdsAdapter]
         } else {
-          MdsContext.adapter = serviceAdapter
+          MdsWorkerBasicContext.adapter = serviceAdapter
         }
       } catch {
         case e: Throwable =>
           logger.error(s"${EZContext.module} service adapter must instance of MdsAdapter.", e)
       }
-      if (MdsContext.adapter != null) {
+      if (MdsWorkerBasicContext.adapter != null) {
         try {
           loadSource()
         } catch {
           case e: Throwable =>
             logger.error(s"${EZContext.module} source parse error.", e)
         }
-        if (MdsContext.source != null) {
-          val initR = MdsContext.adapter.init(MdsContext.source)
+        if (MdsWorkerBasicContext.source != null) {
+          val initR = MdsWorkerBasicContext.adapter.init(MdsWorkerBasicContext.source)
           if (initR) {
             val entities =
               ClassScanHelper.scan[Entity](basePath).map {
@@ -55,12 +55,11 @@ object MdsStartup extends LazyLogging {
                   }.toMap
                   MdsRegisterEntityMetaDTO(tableName, fieldFamilies, fieldTypes)
               }
-            MdsContext.dataExchangeWorker.registerReq(MdsRegisterReqDTO(MdsContext.source.code, entities))
-            MdsContext.apiExchangeWorker.registerReq(MdsContext.source)
-            MdsContext.apiExchangeWorker.collectExecResp(MdsContext.source.code)
-            MdsContext.apiExchangeWorker.collectTestResp(MdsContext.source.code)
-            MdsContext.apiExchangeWorker.queryPullResp(MdsContext.source.code)
-            MdsContext.apiExchangeWorker.queryPushReq()
+            MdsWorkerBasicContext.dataExchangeWorker.registerReq(MdsRegisterReqDTO(MdsWorkerBasicContext.source.code, entities))
+            MdsWorkerBasicContext.apiExchangeWorker.registerReq(MdsWorkerBasicContext.source)
+            MdsWorkerBasicContext.apiExchangeWorker.collectExecResp(MdsWorkerBasicContext.source.code)
+            MdsWorkerBasicContext.apiExchangeWorker.collectTestResp(MdsWorkerBasicContext.source.code)
+            MdsWorkerBasicContext.apiExchangeWorker.queryPullResp(MdsWorkerBasicContext.source.code)
             DMonitorService.start()
             logger.info(s"${EZContext.module} started.")
           } else {
@@ -77,9 +76,9 @@ object MdsStartup extends LazyLogging {
 
   private def loadSource(): Unit = {
     val sourceJson = EZContext.args.getJsonObject(FLAG_SOURCE)
-    MdsContext.source = JsonHelper.toObject[MdsSourceMainDTO](sourceJson.encode())
-    MdsContext.source.code = EZContext.app + "_" + EZContext.module
-    MdsContext.source.items.foreach {
+    MdsWorkerBasicContext.source = JsonHelper.toObject[MdsSourceMainDTO](sourceJson.encode())
+    MdsWorkerBasicContext.source.code = EZContext.app + "_" + EZContext.module
+    MdsWorkerBasicContext.source.items.foreach {
       item =>
         if (item.category == null) {
           item.category = sourceJson.getString("category", "")
@@ -106,10 +105,10 @@ object MdsStartup extends LazyLogging {
   }
 
   sys.addShutdownHook {
-    val shutdownR = MdsContext.adapter.shutdown(MdsContext.source)
+    val shutdownR = MdsWorkerBasicContext.adapter.shutdown(MdsWorkerBasicContext.source)
     if (shutdownR) {
-      MdsContext.apiExchangeWorker.unRegisterReq(MdsContext.source.code)
-      MdsContext.dataExchangeWorker.unRegisterReq(MdsContext.source.code)
+      MdsWorkerBasicContext.apiExchangeWorker.unRegisterReq(MdsWorkerBasicContext.source.code)
+      MdsWorkerBasicContext.dataExchangeWorker.unRegisterReq(MdsWorkerBasicContext.source.code)
       logger.info(s"${EZContext.module} shutdown.")
     } else {
       logger.error(s"${EZContext.module} shutdown error [${shutdownR.code}] ${shutdownR.message}.")

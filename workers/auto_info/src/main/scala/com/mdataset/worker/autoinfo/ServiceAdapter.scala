@@ -4,7 +4,7 @@ import java.util.Date
 
 import com.ecfront.common.Resp
 import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceItemDTO}
-import com.mdataset.lib.worker.basic.{MdsAdapter, MdsContext}
+import com.mdataset.lib.worker.basic.{MdsAdapter, MdsWorkerBasicContext}
 
 object ServiceAdapter extends MdsAdapter {
 
@@ -24,14 +24,13 @@ object ServiceAdapter extends MdsAdapter {
     Resp.success(null)
   }
 
-  override def queryPush(): Resp[(String, Any)] = {
-    Thread.sleep(10000)
+  override def queryPush(status: MdsCollectStatusDTO): Resp[(String, Any)] = {
     Resp.success(("model",s"""{"t":1}"""))
   }
 
   override def queryPull(itemCode: String, query: Map[String, String], source: MdsSourceItemDTO): Resp[Any] = {
     // TODO
-    MdsContext.dataExchangeWorker.queryBySqlReq("", List())
+    MdsWorkerBasicContext.dataExchangeWorker.queryBySqlReq("", List())
   }
 
 }

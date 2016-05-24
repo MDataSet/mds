@@ -17,8 +17,7 @@ object ServiceAdapter extends MdsAdapter {
     Resp.success(null)
   }
 
-  override def queryPush(): Resp[(String, Any)] = {
-    Thread.sleep(10000)
+  override def queryPush(status: MdsCollectStatusDTO): Resp[(String, Any)] = {
     Resp.success(("model",s"""{"t":1}"""))
   }
 
