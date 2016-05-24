@@ -12,21 +12,21 @@ object MdsKafkaDataExchangeMaster extends MdsDataExchangeMaster {
 
   private val producers = collection.mutable.Map[String, collection.mutable.Map[String, Producer]]()
 
-  override protected def fetchRegisterResp(fun: MdsRegisterReqDTO => Resp[Void]): Unit = {
+  override protected def fetchRegisterResp(callback: MdsRegisterReqDTO => Resp[Void]): Unit = {
     EventBusProcessor.Async.consumerAdv[MdsRegisterReqDTO](BasicContext.FLAG_DATA_REGISTER, {
       (source, reply) =>
-        reply(fun(source))
+        reply(callback(source))
     })
   }
 
-  override protected def fetchUnRegisterResp(fun: String => Resp[Void]): Unit = {
+  override protected def fetchUnRegisterResp(callback: String => Resp[Void]): Unit = {
     EventBusProcessor.Async.consumerAdv[String](BasicContext.FLAG_DATA_UN_REGISTER, {
       (code, reply) =>
-        reply(fun(code))
+        reply(callback(code))
     })
   }
 
-  override protected def fetchInsert(code: String, callback: MdsInsertReqDTO => Resp[Void]): Unit = {
+  override protected def fetchInsertResp(code: String, callback: MdsInsertReqDTO => Resp[Void]): Unit = {
     KafkaProcessor.Consumer(BasicContext.FLAG_DATA_INSERT + code, EZContext.module).receive({
       (message, _) =>
         callback(JsonHelper.toObject[MdsInsertReqDTO](message))

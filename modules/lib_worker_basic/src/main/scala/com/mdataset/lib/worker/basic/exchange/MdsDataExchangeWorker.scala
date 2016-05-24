@@ -29,20 +29,20 @@ trait MdsDataExchangeWorker extends MdsExchangeWorker {
   protected def fetchRegisterReq(source: MdsRegisterReqDTO): Resp[Void]
 
   /**
-    * 插入数据
+    * 插入数据请求
     *
     * @param lines 数据项
     * @tparam E 数据类型，必须是[[MdsIdModel]]的子类
     * @return 是否成功
     */
-  def insert[E <: MdsIdModel](lines: List[E]): Resp[Void] = {
+  def insertReq[E <: MdsIdModel](lines: List[E]): Resp[Void] = {
     if (lines != null) {
       val items = lines.map {
         line =>
           JsonHelper.toJsonString(line)
       }
       val tableName = lines.head.getClass.getSimpleName
-      fetchInsert(tableName, items)
+      fetchInsertReq(tableName, items)
       Resp.success(null)
     } else {
       Resp.success(null)
@@ -50,16 +50,16 @@ trait MdsDataExchangeWorker extends MdsExchangeWorker {
   }
 
   /**
-    * 插入数据消息实现
+    * 插入数据请求消息实现
     *
     * @param tableName 表名
     * @param items     数据项
     * @return 是否成功
     */
-  protected def fetchInsert(tableName: String, items: List[String]): Resp[Void]
+  protected def fetchInsertReq(tableName: String, items: List[String]): Resp[Void]
 
   /**
-    * 查询数据
+    * 查询数据请求
     *
     * @param sql        sql
     * @param parameters 参数
@@ -76,7 +76,7 @@ trait MdsDataExchangeWorker extends MdsExchangeWorker {
   }
 
   /**
-    * 查询数据消息实现
+    * 查询数据请求消息实现
     *
     * @param sql        sql
     * @param parameters 参数

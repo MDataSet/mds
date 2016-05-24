@@ -9,11 +9,15 @@ import com.ecfront.ez.framework.service.scheduler.{EZ_Scheduler, ScheduleJob, Sc
 import com.mdataset.service.api.MdsContext
 import com.mdataset.service.api.model.MdsCollectStatusEntity
 
+/**
+  * 采集测试调度器回调类
+  */
 object MdsCollectTestScheduleJob extends ScheduleJob {
 
   override def execute(scheduler: EZ_Scheduler): Resp[Void] = {
     val code = scheduler.parameters("code").asInstanceOf[String]
     val itemCode = scheduler.parameters("itemCode").asInstanceOf[String]
+    // 发起采集测试请求
     MdsContext.apiExchangeMaster.collectTestReq(code, itemCode, {
       resp =>
         if (!resp) {
@@ -22,9 +26,9 @@ object MdsCollectTestScheduleJob extends ScheduleJob {
             status = new MdsCollectStatusEntity
             status.code = code
             status.item_code = itemCode
+            status.info = Map[String, Any]()
           }
-          status.last_update_time = TimeHelper.msf.format(new Date())
-          status.info = Map[String, Any]()
+          // 采集测试完成后（无论成功还是失败）持久化最新状态
           status.status = false
           logger.error(s"Collect Test error [${resp.code}]:${resp.message}")
           MdsCollectStatusEntity.saveOrUpdate(status)

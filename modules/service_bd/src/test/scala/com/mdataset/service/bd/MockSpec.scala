@@ -8,7 +8,7 @@ class MockSpec extends BasicSpec {
 
   test("Mock Test") {
     com.mdataset.lib.worker.basic.MdsStartup.init(ServiceAdapter)
-    com.mdataset.lib.worker.basic.MdsWorkerBasicContext.dataExchangeWorker.insert(List(
+    com.mdataset.lib.worker.basic.MdsWorkerBasicContext.dataExchangeWorker.insertReq(List(
       Model("a", 20, enable = true),
       Model("b", 40, enable = true),
       Model("c", 20, enable = false)

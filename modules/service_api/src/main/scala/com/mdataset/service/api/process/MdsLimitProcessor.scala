@@ -6,12 +6,23 @@ import com.ecfront.ez.framework.service.distributed.DCounterService
 import com.mdataset.lib.basic.model.MdsSourceItemDTO
 import io.vertx.core.Handler
 
+/**
+  * 查询限制处理器
+  */
 object MdsLimitProcessor {
 
+  // 默认计数器调度间隔
   private val DEFAULT_COUNTER_DEC_PERIODIC: Long = 60000
   private val FLAG_LIMIT = "__mds_limit_"
+  // 计数器集合
   private val counters = collection.mutable.Map[String, DCounterService]()
 
+  /**
+    * 添加计数器
+    *
+    * @param code 数据源code
+    * @param item 数据项
+    */
   def addCounter(code: String, item: MdsSourceItemDTO): Unit = {
     counters -= code + "_" + item.item_code
     if (item.query_limit != null && item.query_limit.hourly_max_times != 0) {
@@ -19,6 +30,13 @@ object MdsLimitProcessor {
     }
   }
 
+  /**
+    * 限制过滤
+    *
+    * @param code 数据源code
+    * @param item 数据项
+    * @return 是否被限制
+    */
   def limitFilter(code: String, item: MdsSourceItemDTO): Resp[Void] = {
     if (item.query_limit != null && item.query_limit.hourly_max_times != 0) {
       if (counters(code + "_" + item.item_code).inc() >= item.query_limit.hourly_max_times) {

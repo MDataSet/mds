@@ -8,6 +8,11 @@ import com.mdataset.lib.basic.BasicContext
 import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsQuerySqlReqDTO, MdsRegisterReqDTO}
 import com.mdataset.lib.worker.basic.MdsWorkerBasicContext
 
+/**
+  * BD Service交互接口的消息默认实现
+  *
+  * 使用EventBus及Kafka通道
+  */
 object MdsKafkaDataExchangeWorker extends MdsDataExchangeWorker {
 
   private val insertProducer = KafkaProcessor.Producer(
@@ -28,7 +33,7 @@ object MdsKafkaDataExchangeWorker extends MdsDataExchangeWorker {
     Resp.success(null)
   }
 
-  override protected def fetchInsert(tableName: String, items: List[String]): Resp[Void] = {
+  override protected def fetchInsertReq(tableName: String, items: List[String]): Resp[Void] = {
     insertProducer.send(JsonHelper.toJsonString(MdsInsertReqDTO(tableName, items)))
     Resp.success(null)
   }

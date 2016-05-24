@@ -10,16 +10,25 @@ import io.vertx.core.json.JsonObject
 
 import scala.reflect.runtime._
 
+/**
+  * Worker启动类
+  */
 object MdsStartup extends LazyLogging {
 
   private val runtimeMirror = universe.runtimeMirror(getClass.getClassLoader)
 
+  // 配置文件中source内容的字段名
   private val FLAG_SOURCE: String = "source"
 
   def main(): Unit = {
     init(null)
   }
 
+  /**
+    * 初始化方法
+    *
+    * @param serviceAdapter 特殊的Worker服务适配器，为空时使用约定类名
+    */
   def init(serviceAdapter: MdsAdapter = null): Unit = {
     if (EZManager.start()) {
       val basePath = s"com.mdataset.worker.${EZContext.module}"
@@ -44,6 +53,7 @@ object MdsStartup extends LazyLogging {
         if (MdsWorkerBasicContext.source != null) {
           val initR = MdsWorkerBasicContext.adapter.init(MdsWorkerBasicContext.source)
           if (initR) {
+            // 要注册的实体类meta信息
             val entities =
               ClassScanHelper.scan[Entity](basePath).map {
                 clazz =>
@@ -55,25 +65,30 @@ object MdsStartup extends LazyLogging {
                   }.toMap
                   MdsRegisterEntityMetaDTO(tableName, fieldFamilies, fieldTypes)
               }
+            // 启用各类交互接口
             MdsWorkerBasicContext.dataExchangeWorker.registerReq(MdsRegisterReqDTO(MdsWorkerBasicContext.source.code, entities))
             MdsWorkerBasicContext.apiExchangeWorker.registerReq(MdsWorkerBasicContext.source)
             MdsWorkerBasicContext.apiExchangeWorker.collectExecResp(MdsWorkerBasicContext.source.code)
             MdsWorkerBasicContext.apiExchangeWorker.collectTestResp(MdsWorkerBasicContext.source.code)
             MdsWorkerBasicContext.apiExchangeWorker.queryPullResp(MdsWorkerBasicContext.source.code)
+            // 启动心跳服务
             DMonitorService.start()
             logger.info(s"${EZContext.module} started.")
           } else {
             logger.error(s"${EZContext.module} init error [${initR.code}] ${initR.message}.")
           }
-        }else{
+        } else {
           logger.error(s"${EZContext.module} not found source config.")
         }
-      }else{
+      } else {
         logger.error(s"${EZContext.module} not found adapter.")
       }
     }
   }
 
+  /**
+    * 加载数据源
+    */
   private def loadSource(): Unit = {
     val sourceJson = EZContext.args.getJsonObject(FLAG_SOURCE)
     MdsWorkerBasicContext.source = JsonHelper.toObject[MdsSourceMainDTO](sourceJson.encode())
@@ -104,6 +119,7 @@ object MdsStartup extends LazyLogging {
     }
   }
 
+  // 关闭处理
   sys.addShutdownHook {
     val shutdownR = MdsWorkerBasicContext.adapter.shutdown(MdsWorkerBasicContext.source)
     if (shutdownR) {

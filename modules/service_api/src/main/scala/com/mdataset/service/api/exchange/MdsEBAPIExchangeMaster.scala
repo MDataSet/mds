@@ -5,19 +5,24 @@ import com.ecfront.ez.framework.service.eventbus.EventBusProcessor
 import com.mdataset.lib.basic.BasicContext
 import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceMainDTO}
 
+/**
+  * Worker交互接口的消息默认实现
+  *
+  * 使用EventBus通道
+  */
 object MdsEBAPIExchangeMaster extends MdsAPIExchangeMaster {
 
-  override protected def fetchRegisterResp(fun: MdsSourceMainDTO => Resp[Void]): Unit = {
+  override protected def fetchRegisterResp(callback: MdsSourceMainDTO => Resp[Void]): Unit = {
     EventBusProcessor.Async.consumerAdv[MdsSourceMainDTO](BasicContext.FLAG_API_REGISTER, {
       (source, reply) =>
-        reply(fun(source))
+        reply(callback(source))
     })
   }
 
-  override protected def fetchUnRegisterResp(fun: String => Resp[Void]): Unit = {
+  override protected def fetchUnRegisterResp(callback: String => Resp[Void]): Unit = {
     EventBusProcessor.Async.consumerAdv[String](BasicContext.FLAG_API_UN_REGISTER, {
       (code, reply) =>
-        reply(fun(code))
+        reply(callback(code))
     })
   }
 

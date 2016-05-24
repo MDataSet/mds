@@ -56,7 +56,7 @@ trait MdsAPIExchangeWorker extends MdsExchangeWorker {
     * 采集执行响应消息实现
     *
     * @param code     数据源code
-    * @param callback 成功后的处理方法
+    * @param callback 收到消息后的处理方法
     */
   protected def fetchCollectExecResp(code: String, callback: (MdsCollectStatusDTO, Resp[MdsCollectStatusDTO] => Unit) => Unit): Unit
 
@@ -85,7 +85,7 @@ trait MdsAPIExchangeWorker extends MdsExchangeWorker {
     * 采集测试响应消息实现
     *
     * @param code     数据源code
-    * @param callback 成功后的处理方法
+    * @param callback 收到消息后的处理方法
     */
   protected def fetchCollectTestResp(code: String, callback: (String, Resp[Void] => Unit) => Unit): Unit
 
@@ -118,7 +118,7 @@ trait MdsAPIExchangeWorker extends MdsExchangeWorker {
     * 查询响应消息实现
     *
     * @param code     数据源code
-    * @param callback 成功后的处理方法
+    * @param callback 收到消息后的处理方法
     */
   protected def fetchQueryPullResp(code: String, callback: (Map[String, String], Any => Unit) => Unit): Unit
 

@@ -9,6 +9,9 @@ import com.ecfront.ez.framework.service.rpc.http.HTTP
 import com.mdataset.service.api.MdsContext
 import com.mdataset.service.api.model.{MdsCollectStatusEntity, MdsSourceWithStatusVO}
 
+/**
+  * 网站相关接口
+  */
 @RPC("/inter/")
 @HTTP
 object MdsInterfaceAPI {
@@ -28,7 +31,8 @@ object MdsInterfaceAPI {
             if (status != null) {
               vo.code = code
               vo.status = status.status
-              vo.last_update_time = dateF.format(TimeHelper.msf.parse(status.last_update_time))
+              vo.last_success_time = dateF.format(TimeHelper.msf.parse(status.last_success_time + ""))
+              vo.last_check_time = dateF.format(TimeHelper.msf.parse(status.update_time + ""))
             }
             vo
         }

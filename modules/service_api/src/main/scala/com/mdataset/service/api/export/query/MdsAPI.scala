@@ -7,11 +7,22 @@ import com.ecfront.ez.framework.service.rpc.websocket.{WebSocket, WebSocketMessa
 import com.mdataset.service.api.MdsContext
 import com.mdataset.service.api.process.MdsLimitProcessor
 
+/**
+  * 数据API
+  */
 @RPC("/api/")
 @HTTP
 @WebSocket
 object MdsAPI {
 
+  /**
+    * 查询入口
+    *
+    * @param parameter URL参数
+    * @param body      查询条件
+    * @param context   上下文
+    * @return 查询到的数据
+    */
   @POST(":code/:itemCode/")
   def pull(parameter: Map[String, String], body: Map[String, String], context: EZRPCContext): Resp[Any] = {
     val code = parameter("code")
@@ -29,6 +40,14 @@ object MdsAPI {
     }
   }
 
+  /**
+    * 推送激活入口
+    *
+    * @param parameter URL参数
+    * @param body      推送条件
+    * @param context   上下文
+    * @return 推送的数据
+    */
   @REQUEST(":code/:itemCode/")
   def push(parameter: Map[String, String], body: Map[String, String], context: EZRPCContext): Resp[Any] = {
     val code = parameter("code")

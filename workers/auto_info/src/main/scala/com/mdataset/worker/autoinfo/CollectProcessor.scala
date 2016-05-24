@@ -258,7 +258,7 @@ object CollectProcessor extends LazyLogging {
                         modelAutoInfo
                     }
                 }.toList
-                MdsWorkerBasicContext.dataExchangeWorker.insert(seriesObjects)
+                MdsWorkerBasicContext.dataExchangeWorker.insertReq(seriesObjects)
             }
         }
     }
