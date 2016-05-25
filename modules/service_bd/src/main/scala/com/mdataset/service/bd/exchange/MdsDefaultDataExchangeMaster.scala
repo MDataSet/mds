@@ -6,9 +6,9 @@ import com.ecfront.ez.framework.service.eventbus.EventBusProcessor
 import com.ecfront.ez.framework.service.kafka.KafkaProcessor
 import com.ecfront.ez.framework.service.kafka.KafkaProcessor.Producer
 import com.mdataset.lib.basic.BasicContext
-import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsQuerySqlReqDTO, MdsRegisterReqDTO}
+import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsQueryORPushRespDTO, MdsQuerySqlReqDTO, MdsRegisterReqDTO}
 
-object MdsKafkaDataExchangeMaster extends MdsDataExchangeMaster {
+object MdsDefaultDataExchangeMaster extends MdsDataExchangeMaster {
 
   private val producers = collection.mutable.Map[String, collection.mutable.Map[String, Producer]]()
 
@@ -27,19 +27,29 @@ object MdsKafkaDataExchangeMaster extends MdsDataExchangeMaster {
   }
 
   override protected def fetchInsertResp(code: String, callback: MdsInsertReqDTO => Resp[Void]): Unit = {
+    val producer = createAndGetProducer(code, BasicContext.FLAG_API_QUERY_OR_PUSH_RESP)
     KafkaProcessor.Consumer(BasicContext.FLAG_DATA_INSERT + code, EZContext.module).receive({
       (message, _) =>
-        callback(JsonHelper.toObject[MdsInsertReqDTO](message))
+        val insertReq = JsonHelper.toObject[MdsInsertReqDTO](message)
+        val resp = callback(insertReq)
+        if (resp) {
+          producer.send(JsonHelper.toJsonString(MdsQueryORPushRespDTO(insertReq.itemCode, "", insertReq.data)))
+        }
+        resp
     })
   }
 
-  override protected def fetchQueryBySqlResp(code: String, callback: MdsQuerySqlReqDTO => Resp[Any]): Unit = {
-    val producer = createAndGetProducer(code, BasicContext.FLAG_DATA_QUERY_SQL_RESP)
+  override protected def fetchQueryBySqlResp(code: String, callback: MdsQuerySqlReqDTO => Resp[List[String]]): Unit = {
+    val producer = createAndGetProducer(code, BasicContext.FLAG_API_QUERY_OR_PUSH_RESP)
     KafkaProcessor.Consumer(BasicContext.FLAG_DATA_QUERY_SQL_REQ + code, EZContext.module).receive({
-      (message, messageId) =>
-        val resp = callback(JsonHelper.toObject[MdsQuerySqlReqDTO](message))
+      (message, _) =>
+        val querySqlReq = JsonHelper.toObject[MdsQuerySqlReqDTO](message)
+        val resp = callback(querySqlReq)
         if (resp) {
-          producer.send(JsonHelper.toJsonString(resp.body), messageId)
+          resp.body.foreach {
+            data =>
+              producer.send(JsonHelper.toJsonString(MdsQueryORPushRespDTO(querySqlReq.itemCode, querySqlReq.clientId, data)))
+          }
         }
         resp
     })

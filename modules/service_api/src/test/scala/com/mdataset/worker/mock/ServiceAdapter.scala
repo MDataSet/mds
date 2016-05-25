@@ -17,12 +17,8 @@ object ServiceAdapter extends MdsAdapter {
     Resp.success(null)
   }
 
-  override def queryPush(status: MdsCollectStatusDTO): Resp[(String, Any)] = {
-    Resp.success(("model",s"""{"t":1}"""))
-  }
-
-  override def queryPull(itemCode: String, query: Map[String, String], source: MdsSourceItemDTO): Resp[Any] = {
-    Resp.success(s"""{"t":1}""")
+  override def query(itemCode: String, query: Map[String, String], source: MdsSourceItemDTO): Resp[(String,List[Any])] = {
+    Resp.success("SELECT * FROM xx",List())
   }
 
 }

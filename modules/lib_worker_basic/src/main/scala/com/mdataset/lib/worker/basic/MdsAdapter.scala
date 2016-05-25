@@ -31,22 +31,14 @@ trait MdsAdapter extends LazyLogging {
   def collectTest(itemCode: String, source: MdsSourceItemDTO): Resp[Void]
 
   /**
-    * 推送方法，此方法由[[collectExec]]执行成功时触发
-    *
-    * @param status 当前数据采集状态（最后一次执行的信息）
-    * @return 查询到的结果 （itemCode,数据）
-    */
-  def queryPush(status: MdsCollectStatusDTO): Resp[(String, Any)]
-
-  /**
     * 查询方法，此方法由API Service通过MQ触发
     *
     * @param itemCode 要查询的item code
     * @param query    查询条件
     * @param source   要查询的数据项
-    * @return 查询到的结果
+    * @return 查询的SQL
     */
-  def queryPull(itemCode: String, query: Map[String, String], source: MdsSourceItemDTO): Resp[Any]
+  def query(itemCode: String, query: Map[String, String], source: MdsSourceItemDTO): Resp[(String,List[Any])]
 
   /**
     * 初始化方法

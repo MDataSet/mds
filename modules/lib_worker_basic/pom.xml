@@ -35,11 +35,6 @@
             <version>${mds-version}</version>
         </dependency>
         <dependency>
-            <groupId>com.ecfront</groupId>
-            <artifactId>ezf-kafka</artifactId>
-            <version>${ezf-version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${httpclient.version}</version>

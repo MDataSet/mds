@@ -42,8 +42,6 @@ trait MdsAPIExchangeWorker extends MdsExchangeWorker {
           reply(result)
           if (!result) {
             logger.error(s"Collect Exec error [${result.code}]:${result.message}")
-          } else {
-            queryPushReq(result.body)
           }
         } catch {
           case e: Throwable =>
@@ -94,19 +92,22 @@ trait MdsAPIExchangeWorker extends MdsExchangeWorker {
     *
     * @param code 数据源code
     */
-  def queryPullResp(code: String): Unit = {
-    fetchQueryPullResp(code, {
+  def queryResp(code: String): Unit = {
+    fetchQueryResp(code, {
       (query, reply) =>
-        val itemCode = query("itemCode")
+        val itemCode = query("__itemCode__")
+        val clientId = query("__clientId__")
         try {
-          val result = MdsWorkerBasicContext.adapter.queryPull(
+          val result = MdsWorkerBasicContext.adapter.query(
             itemCode,
-            query - "itemCode",
+            query - "__itemCode__" - "__clientId__",
             MdsWorkerBasicContext.source.items.find(_.item_code == itemCode).get)
-          reply(result)
-          if (!result) {
+          if (result) {
+            MdsWorkerBasicContext.dataExchangeWorker.queryBySqlReq(itemCode, result.body._1, result.body._2, clientId)
+          } else {
             logger.error(s"Query pull error [${result.code}]:${result.message}")
           }
+          reply(result)
         } catch {
           case e: Throwable =>
             logger.error(s"Query pull error", e)
@@ -120,37 +121,7 @@ trait MdsAPIExchangeWorker extends MdsExchangeWorker {
     * @param code     数据源code
     * @param callback 收到消息后的处理方法
     */
-  protected def fetchQueryPullResp(code: String, callback: (Map[String, String], Any => Unit) => Unit): Unit
-
-  /**
-    * 推送请求
-    *
-    * 注意，这是发起方，推送是由Worker发起的（在[[com.mdataset.lib.worker.basic.MdsAdapter.collectExec]]执行成功时触发）
-    *
-    * @param status 当前数据采集状态（最后一次执行的信息）
-    */
-  def queryPushReq(status: MdsCollectStatusDTO): Unit = {
-    try {
-      val pushMessageR = MdsWorkerBasicContext.adapter.queryPush(status)
-      if (!pushMessageR) {
-        logger.error(s"Query push error [${pushMessageR.code}]:${pushMessageR.message}")
-      } else {
-        fetchQueryPushReq(MdsWorkerBasicContext.source.code + "_" + pushMessageR.body._1, pushMessageR.body._2)
-      }
-    } catch {
-      case e: Throwable =>
-        logger.error(s"Query push error", e)
-    }
-  }
-
-  /**
-    * 推送请求消息实现
-    *
-    * @param code 数据源code
-    * @param data 推送的数据
-    */
-  protected def fetchQueryPushReq(code: String, data: Any): Unit
-
+  protected def fetchQueryResp(code: String, callback: (Map[String, String], Resp[Void] => Unit) => Unit): Unit
 
 }
 

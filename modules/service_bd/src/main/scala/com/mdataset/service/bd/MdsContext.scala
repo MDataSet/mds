@@ -1,7 +1,7 @@
 package com.mdataset.service.bd
 
 import com.mdataset.lib.basic.model.MdsRegisterReqDTO
-import com.mdataset.service.bd.exchange.MdsKafkaDataExchangeMaster
+import com.mdataset.service.bd.exchange.MdsDefaultDataExchangeMaster
 
 /**
   * BD Service上下文
@@ -14,6 +14,6 @@ object MdsContext {
 
   // Worker交互实现
   // TODO config
-  val dataExchangeMaster = MdsKafkaDataExchangeMaster
+  val dataExchangeMaster = MdsDefaultDataExchangeMaster
 
 }

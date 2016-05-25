@@ -70,7 +70,7 @@ object MdsStartup extends LazyLogging {
             MdsWorkerBasicContext.apiExchangeWorker.registerReq(MdsWorkerBasicContext.source)
             MdsWorkerBasicContext.apiExchangeWorker.collectExecResp(MdsWorkerBasicContext.source.code)
             MdsWorkerBasicContext.apiExchangeWorker.collectTestResp(MdsWorkerBasicContext.source.code)
-            MdsWorkerBasicContext.apiExchangeWorker.queryPullResp(MdsWorkerBasicContext.source.code)
+            MdsWorkerBasicContext.apiExchangeWorker.queryResp(MdsWorkerBasicContext.source.code)
             // 启动心跳服务
             DMonitorService.start()
             logger.info(s"${EZContext.module} started.")

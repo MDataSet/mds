@@ -11,7 +11,7 @@ import com.mdataset.lib.worker.basic.MdsWorkerBasicContext
   *
   * 使用EventBus通道
   */
-object MdsEBAPIExchangeWorker extends MdsAPIExchangeWorker {
+object MdsDefaultAPIExchangeWorker extends MdsAPIExchangeWorker {
 
   override protected def fetchRegisterReq(source: MdsSourceMainDTO): Resp[Void] = {
     EventBusProcessor.send(BasicContext.FLAG_API_REGISTER, source)
@@ -37,14 +37,10 @@ object MdsEBAPIExchangeWorker extends MdsAPIExchangeWorker {
     }
   }
 
-  override protected def fetchQueryPushReq(code: String, data: Any): Unit = {
-    EventBusProcessor.send(BasicContext.FLAG_API_QUERY_PUSH + code, data)
-  }
-
-  override protected def fetchQueryPullResp(code: String, callback: (Map[String, String], (Any) => Unit) => Unit): Unit = {
+  override protected def fetchQueryResp(code: String, callback: (Map[String, String], (Resp[Void]) => Unit) => Unit): Unit = {
     MdsWorkerBasicContext.source.items.foreach {
       item =>
-        EventBusProcessor.Async.consumerAdv[Map[String, String]](BasicContext.FLAG_API_QUERY_PULL + code + "_" + item.item_code, callback)
+        EventBusProcessor.Async.consumerAdv[Map[String, String]](BasicContext.FLAG_API_QUERY + code + "_" + item.item_code, callback)
     }
   }
 

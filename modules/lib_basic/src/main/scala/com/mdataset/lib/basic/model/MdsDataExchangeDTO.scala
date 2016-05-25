@@ -18,17 +18,28 @@ case class MdsRegisterReqDTO(code: String, entityMeta: List[MdsRegisterEntityMet
 case class MdsRegisterEntityMetaDTO(name: String, fieldFamilies: Map[String, String], fieldTypes: Map[String, String])
 
 /**
+  * 向BD Service插入数据的请求对象
+  *
+  * @param itemCode 数据项code
+  * @param data     数据
+  */
+case class MdsInsertReqDTO(itemCode: String, data:String)
+
+/**
   * 向BD Service查询数据的请求对象
   *
+  * @param itemCode   数据项code
+  * @param clientId   请求Id
   * @param sql        sql
   * @param parameters 参数
   */
-case class MdsQuerySqlReqDTO(sql: String, parameters: List[Any])
+case class MdsQuerySqlReqDTO(itemCode: String, clientId: String, sql: String, parameters: List[Any])
 
 /**
-  * 向BD Service插入数据的请求对象
+  * 向API Service返回数据的响应对象
   *
-  * @param tableName 表名
-  * @param items     数据项
+  * @param itemCode 数据项code
+  * @param clientId 请求Id
+  * @param data     数据
   */
-case class MdsInsertReqDTO(tableName: String, items: List[String])
+case class MdsQueryORPushRespDTO(itemCode: String, clientId: String, data: String)

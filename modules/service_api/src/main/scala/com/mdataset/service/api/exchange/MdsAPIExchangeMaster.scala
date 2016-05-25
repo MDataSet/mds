@@ -5,7 +5,7 @@ import java.util.concurrent.CopyOnWriteArraySet
 import com.ecfront.common.Resp
 import com.ecfront.ez.framework.service.rpc.foundation.Method
 import com.ecfront.ez.framework.service.rpc.websocket.WebSocketMessagePushManager
-import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceMainDTO}
+import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsQueryORPushRespDTO, MdsSourceMainDTO}
 import com.mdataset.service.api.MdsContext
 import com.mdataset.service.api.process.{MdsCollectExecScheduleJob, MdsLimitProcessor}
 import com.typesafe.scalalogging.slf4j.LazyLogging
@@ -34,9 +34,8 @@ trait MdsAPIExchangeMaster extends LazyLogging {
             MdsCollectExecScheduleJob.add(code, itemCode, item.collect_exec_schedule)
             // 添加查询限制
             MdsLimitProcessor.addCounter(code, item)
-            // 添加推送响应
-            queryPushResp(code, itemCode)
         }
+        pushProcess(code)
         Resp.success(null)
     })
   }
@@ -58,7 +57,7 @@ trait MdsAPIExchangeMaster extends LazyLogging {
         MdsContext.sources(code).values.foreach {
           item =>
             // 移除WebSocket连接
-            WebSocketMessagePushManager.remove(Method.REQUEST, s"/api/$code/${item.item_code}/")
+            WebSocketMessagePushManager.remove(Method.REQUEST, s"/api/$code/${item.item_code}/", matchAll = false)
         }
         Resp.success(null)
     })
@@ -77,7 +76,7 @@ trait MdsAPIExchangeMaster extends LazyLogging {
     * @param status   当前数据采集状态（最后一次执行的信息）
     * @param callback 收到消息后的处理方法
     */
-  def collectExecReq(status: MdsCollectStatusDTO, callback: Resp[MdsCollectStatusDTO] => Resp[Void]): Unit = {
+  def collectExecReq(status: MdsCollectStatusDTO, callback: Resp[MdsCollectStatusDTO] => Unit): Unit = {
     fetchCollectExecReq(status, callback)
   }
 
@@ -87,7 +86,7 @@ trait MdsAPIExchangeMaster extends LazyLogging {
     * @param status   当前数据采集状态（最后一次执行的信息）
     * @param callback 收到消息后的处理方法
     */
-  protected def fetchCollectExecReq(status: MdsCollectStatusDTO, callback: Resp[MdsCollectStatusDTO] => Resp[Void]): Unit
+  protected def fetchCollectExecReq(status: MdsCollectStatusDTO, callback: Resp[MdsCollectStatusDTO] => Unit): Unit
 
   /**
     * 采集测试响应
@@ -96,7 +95,7 @@ trait MdsAPIExchangeMaster extends LazyLogging {
     * @param itemCode 数据项code
     * @param callback 收到消息后的处理方法
     */
-  def collectTestReq(code: String, itemCode: String, callback: Resp[Void] => Resp[Void]): Unit = {
+  def collectTestReq(code: String, itemCode: String, callback: Resp[Void] => Unit): Unit = {
     fetchCollectTestReq(code, itemCode, callback)
   }
 
@@ -107,46 +106,25 @@ trait MdsAPIExchangeMaster extends LazyLogging {
     * @param itemCode 数据项code
     * @param callback 收到消息后的处理方法
     */
-  protected def fetchCollectTestReq(code: String, itemCode: String, callback: Resp[Void] => Resp[Void]): Unit
-
-  /**
-    * 推送响应
-    *
-    * @param code     数据源code
-    * @param itemCode 数据项code
-    */
-  def queryPushResp(code: String, itemCode: String): Unit = {
-    synchronized {
-      if (!isInit.contains("queryPushResp_" + code + itemCode)) {
-        fetchQueryPushResp(code, itemCode, {
-          message =>
-            // 使用WebSocket推送
-            WebSocketMessagePushManager.ws(Method.REQUEST, s"/api/$code/$itemCode/", message)
-        })
-        isInit.contains("queryPushResp_" + code + itemCode)
-      }
-    }
-  }
-
-  /**
-    * 推送响应消息实现
-    *
-    * @param code     数据源code
-    * @param itemCode 数据项code
-    * @param callback 收到消息后的处理方法
-    */
-  protected def fetchQueryPushResp(code: String, itemCode: String, callback: Any => Unit): Unit
+  protected def fetchCollectTestReq(code: String, itemCode: String, callback: Resp[Void] => Unit): Unit
 
   /**
     * 查询请求
     *
     * @param code     数据源code
     * @param itemCode 数据项code
+    * @param clientId 请求id
     * @param query    查询条件
     * @return 查询到的数据
     */
-  def queryPullReq(code: String, itemCode: String, query: Map[String, String]): Resp[Any] = {
-    fetchQueryPullReq(code, itemCode, query)
+  def queryReq(code: String, itemCode: String, clientId: String, query: Map[String, String]): Unit = {
+    val richQuery = query ++ Map("__itemCode__" -> itemCode, "__clientId__" -> clientId)
+    fetchQueryReq(code, itemCode, richQuery, {
+      resp =>
+        if (!resp) {
+          logger.error(s"Query error [$code]-[$itemCode]-[$clientId]:$query")
+        }
+    })
   }
 
   /**
@@ -157,6 +135,33 @@ trait MdsAPIExchangeMaster extends LazyLogging {
     * @param query    查询条件
     * @return 查询到的数据
     */
-  protected def fetchQueryPullReq(code: String, itemCode: String, query: Map[String, String]): Resp[Any]
+  protected def fetchQueryReq(code: String, itemCode: String, query: Map[String, String], callback: Resp[Void] => Unit): Unit
+
+  /**
+    * 推送处理
+    *
+    * @param code 数据源code
+    */
+  def pushProcess(code: String): Unit = {
+    synchronized {
+      if (!isInit.contains("pushResp_" + code)) {
+        fetchPushResp(code, {
+          pushResp =>
+            // 使用WebSocket推送
+            WebSocketMessagePushManager.ws(Method.REQUEST, s"/api/$code/${pushResp.itemCode}/${pushResp.clientId}/", pushResp.data)
+            Resp.success(null)
+        })
+        isInit.contains("pushResp_" + code)
+      }
+    }
+  }
+
+  /**
+    * 推送处理消息实现
+    *
+    * @param code     数据源code
+    * @param callback 收到消息后的处理方法
+    */
+  protected def fetchPushResp(code: String, callback: MdsQueryORPushRespDTO => Resp[Void]): Unit
 
 }

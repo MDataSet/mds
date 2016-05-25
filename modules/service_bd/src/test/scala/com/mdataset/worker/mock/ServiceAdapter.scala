@@ -3,7 +3,7 @@ package com.mdataset.worker.mock
 import java.util.Date
 
 import com.ecfront.common.Resp
-import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsIdModel, MdsSourceItemDTO}
+import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsBaseEntity, MdsSourceItemDTO}
 import com.mdataset.lib.worker.basic.MdsAdapter
 import com.mdataset.lib.worker.basic.annotation.{Entity, Family}
 
@@ -20,18 +20,14 @@ object ServiceAdapter extends MdsAdapter {
     Resp.success(null)
   }
 
-  override def queryPush(status: MdsCollectStatusDTO): Resp[(String, Any)] = {
-    Resp.success(("model",s"""{"t":1}"""))
-  }
-
-  override def queryPull(itemCode: String, query: Map[String, String], source: MdsSourceItemDTO): Resp[Any] = {
-    Resp.success(s"""{"t":1}""")
+  override def query(itemCode: String, query: Map[String, String], source: MdsSourceItemDTO): Resp[(String,List[Any])] = {
+    Resp.success("SELECT * FROM xx",List())
   }
 
 }
 
 @Entity()
-class Model extends MdsIdModel {
+class Model extends MdsBaseEntity {
 
   @Family("")
   @BeanProperty var name: String = _

@@ -17,9 +17,11 @@ object BasicContext {
   // API采集测试主题名前缀
   val FLAG_API_COLLECT_TEST: String = "mds_api_collectTest_"
   // API推送主题名前缀
-  val FLAG_API_QUERY_PUSH: String = "mds_api_queryPush_"
+  val FLAG_API_PUSH: String = "mds_api_queryPush_"
   // API查询主题名前缀
-  val FLAG_API_QUERY_PULL: String = "mds_api_queryPull_"
+  val FLAG_API_QUERY: String = "mds_api_query_"
+  // API查询或推送响应主题名前缀
+  val FLAG_API_QUERY_OR_PUSH_RESP: String = "mds_api_query_or_push_resp_"
 
   // ========= 定义与BD Service 交互的主题 =========
   // 数据注册主题名
@@ -30,7 +32,5 @@ object BasicContext {
   val FLAG_DATA_INSERT: String = "mds_data_insert_"
   // 数据查询请求主题前缀
   val FLAG_DATA_QUERY_SQL_REQ: String = "mds_data_query_sql_req_"
-  // 数据查询响应主题前缀
-  val FLAG_DATA_QUERY_SQL_RESP: String = "mds_data_query_sql_resp_"
 
 }

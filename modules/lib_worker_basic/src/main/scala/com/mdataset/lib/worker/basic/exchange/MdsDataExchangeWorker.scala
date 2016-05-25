@@ -1,10 +1,7 @@
 package com.mdataset.lib.worker.basic.exchange
 
 import com.ecfront.common.{JsonHelper, Resp}
-import com.fasterxml.jackson.databind.JsonNode
-import com.mdataset.lib.basic.model.{MdsIdModel, MdsRegisterReqDTO}
-
-import scala.collection.JavaConversions._
+import com.mdataset.lib.basic.model.{MdsBaseEntity, MdsRegisterReqDTO}
 
 /**
   * BD Service交互接口
@@ -31,57 +28,49 @@ trait MdsDataExchangeWorker extends MdsExchangeWorker {
   /**
     * 插入数据请求
     *
-    * @param lines 数据项
-    * @tparam E 数据类型，必须是[[MdsIdModel]]的子类
+    * @param itemCode 数据项code
+    * @param data     数据
+    * @tparam E 数据类型，必须是[[MdsBaseEntity]]的子类
     * @return 是否成功
     */
-  def insertReq[E <: MdsIdModel](lines: List[E]): Resp[Void] = {
-    if (lines != null) {
-      val items = lines.map {
-        line =>
-          JsonHelper.toJsonString(line)
-      }
-      val tableName = lines.head.getClass.getSimpleName
-      fetchInsertReq(tableName, items)
-      Resp.success(null)
-    } else {
-      Resp.success(null)
+  def insertReq[E <: MdsBaseEntity](itemCode: String, data: E): Resp[Void] = {
+    if (data != null) {
+      fetchInsertReq(itemCode, JsonHelper.toJsonString(data))
     }
+    Resp.success(null)
   }
 
   /**
     * 插入数据请求消息实现
     *
-    * @param tableName 表名
-    * @param items     数据项
+    * @param itemCode 数据项code
+    * @param data     数据
     * @return 是否成功
     */
-  protected def fetchInsertReq(tableName: String, items: List[String]): Resp[Void]
+  protected def fetchInsertReq(itemCode: String, data: String): Resp[Void]
 
   /**
     * 查询数据请求
     *
+    * @param itemCode   数据项code
     * @param sql        sql
     * @param parameters 参数
-    * @tparam E 数据类型，必须是[[MdsIdModel]]的子类
-    * @return 查询到的数据
+    * @param clientId   请求id
+    * @return 是否成功
     */
-  def queryBySqlReq[E: Manifest](sql: String, parameters: List[Any]): Resp[List[E]] = {
-    val result = fetchQueryBySqlReq(sql, parameters)
-    if (result) {
-      Resp.success(result.body.map(JsonHelper.toObject[E]).toList)
-    } else {
-      result
-    }
+  def queryBySqlReq(itemCode: String, sql: String, parameters: List[Any], clientId: String = ""): Unit = {
+    fetchQueryBySqlReq(itemCode, clientId, sql, parameters)
   }
 
   /**
     * 查询数据请求消息实现
     *
+    * @param itemCode   数据项code
+    * @param clientId   请求id
     * @param sql        sql
     * @param parameters 参数
     * @return 查询到的数据
     */
-  protected def fetchQueryBySqlReq(sql: String, parameters: List[Any]): Resp[JsonNode]
+  protected def fetchQueryBySqlReq(itemCode: String, clientId: String, sql: String, parameters: List[Any]): Resp[Void]
 
 }

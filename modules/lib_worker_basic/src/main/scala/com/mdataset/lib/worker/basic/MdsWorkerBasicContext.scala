@@ -1,7 +1,7 @@
 package com.mdataset.lib.worker.basic
 
 import com.mdataset.lib.basic.model.MdsSourceMainDTO
-import com.mdataset.lib.worker.basic.exchange.{MdsEBAPIExchangeWorker, MdsKafkaDataExchangeWorker}
+import com.mdataset.lib.worker.basic.exchange.{MdsDefaultAPIExchangeWorker, MdsDefaultDataExchangeWorker}
 
 /**
   * Worker基础上下文
@@ -14,8 +14,8 @@ object MdsWorkerBasicContext {
   var source: MdsSourceMainDTO = _
 
   // API Service交互实现
-  lazy val apiExchangeWorker = MdsEBAPIExchangeWorker
+  lazy val apiExchangeWorker = MdsDefaultAPIExchangeWorker
   // BD Service交互实现
-  lazy val dataExchangeWorker = MdsKafkaDataExchangeWorker
+  lazy val dataExchangeWorker = MdsDefaultDataExchangeWorker
 
 }

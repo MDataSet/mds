@@ -101,7 +101,7 @@ trait MdsDataExchangeMaster extends LazyLogging {
         fetchQueryBySqlResp(code, {
           querySqlReq =>
             // TODO query
-            Resp.success(s"""[{"name":"a"}]""")
+            Resp.success(List(s"""{"name":"a"}"""))
         })
         isInit.add("queryBySqlResp_" + code)
       }
@@ -114,6 +114,6 @@ trait MdsDataExchangeMaster extends LazyLogging {
     * @param code     数据源code
     * @param callback 收到消息后的处理方法
     */
-  protected def fetchQueryBySqlResp(code: String, callback: MdsQuerySqlReqDTO => Resp[Any]): Unit
+  protected def fetchQueryBySqlResp(code: String, callback: MdsQuerySqlReqDTO => Resp[List[String]]): Unit
 
 }

@@ -1,7 +1,7 @@
 package com.mdataset.service.api
 
 import com.mdataset.lib.basic.model.MdsSourceItemDTO
-import com.mdataset.service.api.exchange.MdsEBAPIExchangeMaster
+import com.mdataset.service.api.exchange.MdsDefaultAPIExchangeMaster
 
 /**
   * API Service上下文
@@ -14,6 +14,6 @@ object MdsContext {
 
   // Worker交互实现
   // TODO config
-  val apiExchangeMaster=MdsEBAPIExchangeMaster
+  val apiExchangeMaster=MdsDefaultAPIExchangeMaster
 
 }

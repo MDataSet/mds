@@ -7,9 +7,11 @@ import scala.beans.BeanProperty
   *
   * 所有需要持久化的数据实体都要继承此类
   */
-class MdsIdModel {
+class MdsBaseEntity {
 
   // 主键
   @BeanProperty var id: String = _
+  // 更新时间（yyyyMMddHHmmssSSS）
+  @BeanProperty var update_time: Long = _
 
 }
