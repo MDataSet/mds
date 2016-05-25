@@ -26,6 +26,7 @@ trait MdsDataExchangeMaster extends LazyLogging {
         registerEntityMeta(source)
         insertResp(code)
         queryBySqlResp(code)
+        logger.info(s"==Register== [$code] successful.")
         Resp.success(null)
     })
   }
@@ -53,6 +54,7 @@ trait MdsDataExchangeMaster extends LazyLogging {
     fetchUnRegisterResp({
       code =>
         MdsContext.sources -= code
+        logger.info(s"==UnRegister== [$code] successful.")
         Resp.success(null)
     })
   }
@@ -101,7 +103,11 @@ trait MdsDataExchangeMaster extends LazyLogging {
         fetchQueryBySqlResp(code, {
           querySqlReq =>
             // TODO query
-            Resp.success(List(s"""{"name":"a"}"""))
+            Resp.success(List(
+              s"""{"name":"a","age":20,"enable":true}""",
+              s"""{"name":"b","age":40,"enable":true}""",
+              s"""{"name":"c","age":20,"enable":false}"""
+            ))
         })
         isInit.add("queryBySqlResp_" + code)
       }

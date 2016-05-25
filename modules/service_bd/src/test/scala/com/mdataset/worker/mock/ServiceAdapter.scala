@@ -3,8 +3,8 @@ package com.mdataset.worker.mock
 import java.util.Date
 
 import com.ecfront.common.Resp
-import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsBaseEntity, MdsSourceItemDTO}
-import com.mdataset.lib.worker.basic.MdsAdapter
+import com.mdataset.lib.basic.model.{MdsBaseEntity, MdsCollectStatusDTO, MdsSourceItemDTO}
+import com.mdataset.lib.worker.basic.{MdsAdapter, MdsWorkerBasicContext}
 import com.mdataset.lib.worker.basic.annotation.{Entity, Family}
 
 import scala.beans.BeanProperty
@@ -13,6 +13,12 @@ object ServiceAdapter extends MdsAdapter {
 
   override def collectExec(itemCode: String, source: MdsSourceItemDTO, status: MdsCollectStatusDTO): Resp[MdsCollectStatusDTO] = {
     status.last_update_time = new Date()
+    MdsWorkerBasicContext.dataExchangeWorker
+      .insertReq("model", Model("a", 20, enable = true))
+    MdsWorkerBasicContext.dataExchangeWorker
+      .insertReq("model", Model("b", 40, enable = true))
+    MdsWorkerBasicContext.dataExchangeWorker
+      .insertReq("model", Model("c", 20, enable = false))
     Resp.success(status)
   }
 
@@ -21,7 +27,7 @@ object ServiceAdapter extends MdsAdapter {
   }
 
   override def query(itemCode: String, query: Map[String, String], source: MdsSourceItemDTO): Resp[(String,List[Any])] = {
-    Resp.success("SELECT * FROM xx",List())
+    Resp.success("SELECT * FROM model",List())
   }
 
 }

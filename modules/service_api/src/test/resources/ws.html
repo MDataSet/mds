@@ -3,7 +3,7 @@
 <script>
     var socket_resource;
     if (window.WebSocket) {
-        socket_resource = new WebSocket("ws://localhost:8081/api/mds-worker_mock/model/");
+        socket_resource = new WebSocket("ws://localhost:8081/api/ws/mds-worker_mock/model/u2rsfsid/");
         socket_resource.onmessage = function (event) {
             console.log("resource saved received : " + JSON.parse(event.data));
         };

@@ -36,6 +36,7 @@ trait MdsAPIExchangeMaster extends LazyLogging {
             MdsLimitProcessor.addCounter(code, item)
         }
         pushProcess(code)
+        logger.info(s"==Register== [$code] successful.")
         Resp.success(null)
     })
   }
@@ -59,6 +60,7 @@ trait MdsAPIExchangeMaster extends LazyLogging {
             // 移除WebSocket连接
             WebSocketMessagePushManager.remove(Method.REQUEST, s"/api/$code/${item.item_code}/", matchAll = false)
         }
+        logger.info(s"==UnRegister== [$code] successful.")
         Resp.success(null)
     })
   }
