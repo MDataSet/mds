@@ -33,7 +33,8 @@ object MdsDefaultDataExchangeMaster extends MdsDataExchangeMaster {
         val insertReq = JsonHelper.toObject[MdsInsertReqDTO](message)
         val resp = callback(insertReq)
         if (resp) {
-          producer.send(JsonHelper.toJsonString(MdsQueryORPushRespDTO(insertReq.itemCode, "", insertReq.data)))
+          logger.info(s"==Push== bd service request push from worker [${insertReq.code}].")
+          producer.send(JsonHelper.toJsonString(MdsQueryORPushRespDTO(insertReq.code, insertReq.itemCode, "", insertReq.data)))
         }
         resp
     })
@@ -41,17 +42,17 @@ object MdsDefaultDataExchangeMaster extends MdsDataExchangeMaster {
 
   override protected def fetchQueryBySqlResp(code: String, callback: MdsQuerySqlReqDTO => Resp[List[String]]): Unit = {
     val producer = createAndGetProducer(code, BasicContext.FLAG_API_QUERY_OR_PUSH_RESP)
-    KafkaProcessor.Consumer(BasicContext.FLAG_DATA_QUERY_SQL_REQ + code, EZContext.module).receive({
+    EventBusProcessor.Async.consumerAdv[String](BasicContext.FLAG_DATA_QUERY_SQL_REQ + code, {
       (message, _) =>
         val querySqlReq = JsonHelper.toObject[MdsQuerySqlReqDTO](message)
         val resp = callback(querySqlReq)
         if (resp) {
           resp.body.foreach {
             data =>
-              producer.send(JsonHelper.toJsonString(MdsQueryORPushRespDTO(querySqlReq.itemCode, querySqlReq.clientId, data)))
+              logger.info(s"==Push== bd service request push from worker [${querySqlReq.code}].")
+              producer.send(JsonHelper.toJsonString(MdsQueryORPushRespDTO(querySqlReq.code, querySqlReq.itemCode, querySqlReq.clientId, data)))
           }
         }
-        resp
     })
   }
 

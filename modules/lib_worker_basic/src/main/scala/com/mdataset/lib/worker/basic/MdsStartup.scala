@@ -73,7 +73,7 @@ object MdsStartup extends LazyLogging {
             MdsWorkerBasicContext.apiExchangeWorker.queryResp(MdsWorkerBasicContext.source.code)
             // 启动心跳服务
             DMonitorService.start()
-            logger.info(s"${EZContext.module} started.")
+            logger.info(s"==Startup== worker [${MdsWorkerBasicContext.source.code}] startup.")
           } else {
             logger.error(s"${EZContext.module} init error [${initR.code}] ${initR.message}.")
           }
@@ -92,7 +92,7 @@ object MdsStartup extends LazyLogging {
   private def loadSource(): Unit = {
     val sourceJson = EZContext.args.getJsonObject(FLAG_SOURCE)
     MdsWorkerBasicContext.source = JsonHelper.toObject[MdsSourceMainDTO](sourceJson.encode())
-    MdsWorkerBasicContext.source.code = EZContext.app + "_" + EZContext.module
+    MdsWorkerBasicContext.source.code = EZContext.module
     MdsWorkerBasicContext.source.items.foreach {
       item =>
         if (item.category == null) {

@@ -2,6 +2,7 @@ package com.mdataset.lib.worker.basic.exchange
 
 import com.ecfront.common.{JsonHelper, Resp}
 import com.mdataset.lib.basic.model.{MdsBaseEntity, MdsRegisterReqDTO}
+import com.mdataset.lib.worker.basic.MdsWorkerBasicContext
 
 /**
   * BD Service交互接口
@@ -14,6 +15,7 @@ trait MdsDataExchangeWorker extends MdsExchangeWorker {
     * @param source BD注册请求对象
     */
   def registerReq(source: MdsRegisterReqDTO): Unit = {
+    logger.info(s"==Register== worker [${MdsWorkerBasicContext.source.code}] request bd register.")
     fetchRegisterReq(source)
   }
 
@@ -35,6 +37,7 @@ trait MdsDataExchangeWorker extends MdsExchangeWorker {
     */
   def insertReq[E <: MdsBaseEntity](itemCode: String, data: E): Resp[Void] = {
     if (data != null) {
+      logger.info(s"==Insert== worker [${MdsWorkerBasicContext.source.code}] request bd register.")
       fetchInsertReq(itemCode, JsonHelper.toJsonString(data))
     }
     Resp.success(null)
@@ -59,6 +62,7 @@ trait MdsDataExchangeWorker extends MdsExchangeWorker {
     * @return 是否成功
     */
   def queryBySqlReq(itemCode: String, sql: String, parameters: List[Any], clientId: String = ""): Unit = {
+    logger.info(s"==Query== worker [${MdsWorkerBasicContext.source.code}] request query to bd service by client [$clientId].")
     fetchQueryBySqlReq(itemCode, clientId, sql, parameters)
   }
 

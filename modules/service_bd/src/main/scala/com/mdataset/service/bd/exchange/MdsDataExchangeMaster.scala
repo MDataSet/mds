@@ -22,11 +22,12 @@ trait MdsDataExchangeMaster extends LazyLogging {
     fetchRegisterResp({
       source =>
         val code = source.code
+        logger.info(s"==Register== bd service response worker [$code] register.")
         MdsContext.sources += code -> source
         registerEntityMeta(source)
         insertResp(code)
         queryBySqlResp(code)
-        logger.info(s"==Register== [$code] successful.")
+        logger.info(s"==Register== worker [$code] successful.")
         Resp.success(null)
     })
   }
@@ -53,8 +54,9 @@ trait MdsDataExchangeMaster extends LazyLogging {
   def unRegisterResp(): Unit = {
     fetchUnRegisterResp({
       code =>
+        logger.info(s"==UnRegister== bd service response worker [$code] unRegister.")
         MdsContext.sources -= code
-        logger.info(s"==UnRegister== [$code] successful.")
+        logger.info(s"==UnRegister== worker [$code] successful.")
         Resp.success(null)
     })
   }
@@ -76,6 +78,7 @@ trait MdsDataExchangeMaster extends LazyLogging {
       if (!isInit.contains("insert_" + code)) {
         fetchInsertResp(code, {
           insertReq =>
+            logger.info(s"==Insert== bd service response insert from worker [${insertReq.code}].")
             // TODO save
             Resp.success(null)
         })
@@ -102,6 +105,7 @@ trait MdsDataExchangeMaster extends LazyLogging {
       if (!isInit.contains("queryBySqlResp_" + code)) {
         fetchQueryBySqlResp(code, {
           querySqlReq =>
+            logger.info(s"==Query== bd service response query from worker [${querySqlReq.code}].")
             // TODO query
             Resp.success(List(
               s"""{"name":"a","age":20,"enable":true}""",

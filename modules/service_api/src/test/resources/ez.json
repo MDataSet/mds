@@ -1,15 +1,26 @@
 {
   "ez": {
-    "app": "mds-worker",
-    "module": "mock",
+    "app": "mds",
+    "module": "api",
     "services": {
+      "rpc.http": {
+        "servicePath": "com.mdataset.service.api.export",
+        "host": "0.0.0.0",
+        "port": 8080
+      },
+      "storage.mongo": {
+        "host": "192.168.99.100",
+        "port": 27017,
+        "db_name": "mds"
+      },
+      "scheduler": {
+        "storage": "mongo"
+      },
       "distributed": {},
       "eventbus": {},
       "redis": {
         "host": "192.168.99.100",
-        "port": 6379,
-        "auth": "",
-        "db": 0
+        "port": 6379
       },
       "kafka": {
         "brokerList": "192.168.99.100:9092"
@@ -17,86 +28,9 @@
     }
   },
   "args": {
-    "source": {
-      "category": "mock",
-      "data_source": "ecfront.com",
-      "collect_auth": {
-        "user_name": "",
-        "password": "",
-        "account_token": "",
-        "ssh_key": ""
-      },
-      "query_limit": {
-        "hourly_rate": 0
-      },
-      "ext_info": {
-      },
-      "collect_exec_schedule": "0 0 0 /1 * ?",
-      "collect_test_schedule": "0 0 0 /10 * ?",
-      "items": [
-        {
-          "item_code": "model",
-          "desc": "some model",
-          "query_push_resp_format": [
-            {
-              "field": "",
-              "default_value": "",
-              "data_type": "",
-              "desc": "",
-              "necessary": ""
-            }
-          ],
-          "query_pull_req_format": [
-            {
-              "field": "",
-              "default_value": "",
-              "data_type": "",
-              "desc": "",
-              "necessary": ""
-            }
-          ],
-          "query_pull_resp_format": [
-            {
-              "field": "",
-              "default_value": "",
-              "data_type": "",
-              "desc": "",
-              "necessary": ""
-            }
-          ]
-        },
-        {
-          "item_code": "dealer",
-          "desc": "some dealer",
-          "query_push_resp_format": [
-            {
-              "field": "",
-              "default_value": "",
-              "data_type": "",
-              "desc": "",
-              "necessary": ""
-            }
-          ],
-          "query_pull_req_format": [
-            {
-              "field": "",
-              "default_value": "",
-              "data_type": "",
-              "desc": "",
-              "necessary": ""
-            }
-          ],
-          "query_pull_resp_format": [
-            {
-              "field": "",
-              "default_value": "",
-              "data_type": "",
-              "desc": "",
-              "necessary": ""
-            }
-          ]
-        }
-      ]
+    "socket": {
+      "host": "0.0.0.0",
+      "port": 4040
     }
   }
 }

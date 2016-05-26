@@ -1,7 +1,7 @@
 package com.mdataset.lib.worker.basic
 
 import com.ecfront.common.Resp
-import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceItemDTO, MdsSourceMainDTO}
+import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceItemDTO, MdsSourceMainDTO, QueryReqDTO}
 import com.typesafe.scalalogging.slf4j.LazyLogging
 
 /**
@@ -34,11 +34,11 @@ trait MdsAdapter extends LazyLogging {
     * 查询方法，此方法由API Service通过MQ触发
     *
     * @param itemCode 要查询的item code
-    * @param query    查询条件
+    * @param queryReq    查询请求对象
     * @param source   要查询的数据项
     * @return 查询的SQL
     */
-  def query(itemCode: String, query: Map[String, String], source: MdsSourceItemDTO): Resp[(String,List[Any])]
+  def query(itemCode: String, queryReq:QueryReqDTO, source: MdsSourceItemDTO): Resp[(String,List[Any])]
 
   /**
     * 初始化方法

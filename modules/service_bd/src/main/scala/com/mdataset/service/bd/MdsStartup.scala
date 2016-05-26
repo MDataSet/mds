@@ -11,6 +11,7 @@ object MdsStartup extends App with LazyLogging {
   if (EZManager.start()) {
     MdsContext.dataExchangeMaster.registerResp()
     MdsContext.dataExchangeMaster.unRegisterResp()
+    logger.info("==Startup== bd service startup.")
   }
 
 }

@@ -5,7 +5,7 @@ import com.ecfront.ez.framework.core.EZContext
 import com.ecfront.ez.framework.service.eventbus.EventBusProcessor
 import com.ecfront.ez.framework.service.kafka.KafkaProcessor
 import com.mdataset.lib.basic.BasicContext
-import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsQueryORPushRespDTO, MdsSourceMainDTO}
+import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsQueryORPushRespDTO, MdsSourceMainDTO, QueryReqDTO}
 
 /**
   * Worker交互接口的消息默认实现
@@ -42,16 +42,15 @@ object MdsDefaultAPIExchangeMaster extends MdsAPIExchangeMaster {
     })
   }
 
-  override protected def fetchQueryReq(code: String, itemCode: String,
-                                       query: Map[String, String], callback: Resp[Void] => Unit): Unit = {
-    EventBusProcessor.Async.sendAdv[Resp[Void]](BasicContext.FLAG_API_QUERY + code + "_" + itemCode, query, {
+  override protected def fetchQueryReq(req: QueryReqDTO, callback: Resp[Void] => Unit): Unit = {
+    EventBusProcessor.Async.sendAdv[Resp[Void]](BasicContext.FLAG_API_QUERY + req.sourceCode + "_" + req.sourceItemCode, req, {
       (resp, _) =>
         callback(resp)
     })
   }
 
   override protected def fetchPushResp(code: String, callback: MdsQueryORPushRespDTO => Resp[Void]): Unit = {
-    KafkaProcessor.Consumer(BasicContext.FLAG_API_PUSH + code, EZContext.module).receive({
+    KafkaProcessor.Consumer(BasicContext.FLAG_API_QUERY_OR_PUSH_RESP + code, EZContext.module).receive({
       (message, _) =>
         val pushResp = JsonHelper.toObject[MdsQueryORPushRespDTO](message)
         callback(pushResp)

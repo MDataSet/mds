@@ -6,17 +6,7 @@
       "rpc.http": {
         "servicePath": "com.mdataset.service.api.export",
         "host": "0.0.0.0",
-        "port": 8080,
-        "monitor": {
-          "slow": {
-            "time": 1000
-          }
-        }
-      },
-      "rpc.websocket": {
-        "servicePath": "com.mdataset.service.api.export",
-        "host": "0.0.0.0",
-        "port": 8081
+        "port": 8080
       },
       "storage.mongo": {
         "host": "192.168.99.100",
@@ -27,12 +17,10 @@
         "storage": "mongo"
       },
       "distributed": {},
-      "eventbus":{},
+      "eventbus": {},
       "redis": {
         "host": "192.168.99.100",
-        "port": 6379,
-        "auth": "",
-        "db": 0
+        "port": 6379
       },
       "kafka": {
         "brokerList": "192.168.99.100:9092"
@@ -40,5 +28,9 @@
     }
   },
   "args": {
+    "socket": {
+      "host": "0.0.0.0",
+      "port": 4040
+    }
   }
 }

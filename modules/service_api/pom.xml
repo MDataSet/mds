@@ -46,11 +46,6 @@
         </dependency>
         <dependency>
             <groupId>com.ecfront</groupId>
-            <artifactId>ezf-rpc-websocket</artifactId>
-            <version>${ezf-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.ecfront</groupId>
             <artifactId>ezf-scheduler</artifactId>
             <version>${ezf-version}</version>
         </dependency>

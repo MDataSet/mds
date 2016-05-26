@@ -3,9 +3,9 @@ package com.mdataset.worker.mock
 import java.util.Date
 
 import com.ecfront.common.Resp
-import com.mdataset.lib.basic.model.{MdsBaseEntity, MdsCollectStatusDTO, MdsSourceItemDTO}
-import com.mdataset.lib.worker.basic.{MdsAdapter, MdsWorkerBasicContext}
+import com.mdataset.lib.basic.model.{MdsBaseEntity, MdsCollectStatusDTO, MdsSourceItemDTO, QueryReqDTO}
 import com.mdataset.lib.worker.basic.annotation.{Entity, Family}
+import com.mdataset.lib.worker.basic.{MdsAdapter, MdsWorkerBasicContext}
 
 import scala.beans.BeanProperty
 
@@ -26,8 +26,8 @@ object ServiceAdapter extends MdsAdapter {
     Resp.success(null)
   }
 
-  override def query(itemCode: String, query: Map[String, String], source: MdsSourceItemDTO): Resp[(String,List[Any])] = {
-    Resp.success("SELECT * FROM model",List())
+  override def query(itemCode: String, queryReq: QueryReqDTO, source: MdsSourceItemDTO): Resp[(String, List[Any])] = {
+    Resp.success("SELECT * FROM model", List())
   }
 
 }

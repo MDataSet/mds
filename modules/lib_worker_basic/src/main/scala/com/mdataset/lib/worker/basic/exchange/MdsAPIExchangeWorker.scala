@@ -1,7 +1,7 @@
 package com.mdataset.lib.worker.basic.exchange
 
 import com.ecfront.common.Resp
-import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceMainDTO}
+import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceMainDTO, QueryReqDTO}
 import com.mdataset.lib.worker.basic.MdsWorkerBasicContext
 
 /**
@@ -15,6 +15,7 @@ trait MdsAPIExchangeWorker extends MdsExchangeWorker {
     * @param source 数据源主体
     */
   def registerReq(source: MdsSourceMainDTO): Unit = {
+    logger.info(s"==Register== worker [${MdsWorkerBasicContext.source.code}] request api register.")
     fetchRegisterReq(source)
   }
 
@@ -34,6 +35,7 @@ trait MdsAPIExchangeWorker extends MdsExchangeWorker {
   def collectExecResp(code: String): Unit = {
     fetchCollectExecResp(code, {
       (status, reply) =>
+        logger.info(s"==Collect== worker [${MdsWorkerBasicContext.source.code}] response collect execute.")
         try {
           val result = MdsWorkerBasicContext.adapter.collectExec(
             status.item_code,
@@ -66,6 +68,7 @@ trait MdsAPIExchangeWorker extends MdsExchangeWorker {
   def collectTestResp(code: String): Unit = {
     fetchCollectTestResp(code, {
       (itemCode, reply) =>
+        logger.info(s"==Collect== worker [${MdsWorkerBasicContext.source.code}] response collect test.")
         try {
           val result = MdsWorkerBasicContext.adapter.collectTest(itemCode, MdsWorkerBasicContext.source.items.find(_.item_code == itemCode).get)
           reply(result)
@@ -94,23 +97,22 @@ trait MdsAPIExchangeWorker extends MdsExchangeWorker {
     */
   def queryResp(code: String): Unit = {
     fetchQueryResp(code, {
-      (query, reply) =>
-        val itemCode = query("__itemCode__")
-        val clientId = query("__clientId__")
+      (queryReq, reply) =>
+        logger.info(s"==Query== worker [${MdsWorkerBasicContext.source.code}] response query by client [${queryReq.clientId}].")
         try {
           val result = MdsWorkerBasicContext.adapter.query(
-            itemCode,
-            query - "__itemCode__" - "__clientId__",
-            MdsWorkerBasicContext.source.items.find(_.item_code == itemCode).get)
+            queryReq.sourceItemCode,
+            queryReq,
+            MdsWorkerBasicContext.source.items.find(_.item_code == queryReq.sourceItemCode).get)
           if (result) {
-            MdsWorkerBasicContext.dataExchangeWorker.queryBySqlReq(itemCode, result.body._1, result.body._2, clientId)
+            MdsWorkerBasicContext.dataExchangeWorker.queryBySqlReq(queryReq.sourceItemCode, result.body._1, result.body._2, queryReq.clientId)
           } else {
-            logger.error(s"Query pull error [${result.code}]:${result.message}")
+            logger.error(s"Query error [${result.code}]:${result.message}")
           }
           reply(result)
         } catch {
           case e: Throwable =>
-            logger.error(s"Query pull error", e)
+            logger.error(s"Query error", e)
         }
     })
   }
@@ -121,7 +123,7 @@ trait MdsAPIExchangeWorker extends MdsExchangeWorker {
     * @param code     数据源code
     * @param callback 收到消息后的处理方法
     */
-  protected def fetchQueryResp(code: String, callback: (Map[String, String], Resp[Void] => Unit) => Unit): Unit
+  protected def fetchQueryResp(code: String, callback: (QueryReqDTO, Resp[Void] => Unit) => Unit): Unit
 
 }
 

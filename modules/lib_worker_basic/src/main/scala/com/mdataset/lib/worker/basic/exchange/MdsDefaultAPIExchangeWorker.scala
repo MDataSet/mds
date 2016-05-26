@@ -3,7 +3,7 @@ package com.mdataset.lib.worker.basic.exchange
 import com.ecfront.common.Resp
 import com.ecfront.ez.framework.service.eventbus.EventBusProcessor
 import com.mdataset.lib.basic.BasicContext
-import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceMainDTO}
+import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceMainDTO, QueryReqDTO}
 import com.mdataset.lib.worker.basic.MdsWorkerBasicContext
 
 /**
@@ -37,10 +37,10 @@ object MdsDefaultAPIExchangeWorker extends MdsAPIExchangeWorker {
     }
   }
 
-  override protected def fetchQueryResp(code: String, callback: (Map[String, String], (Resp[Void]) => Unit) => Unit): Unit = {
+  override protected def fetchQueryResp(code: String, callback: (QueryReqDTO, Resp[Void] => Unit) => Unit): Unit = {
     MdsWorkerBasicContext.source.items.foreach {
       item =>
-        EventBusProcessor.Async.consumerAdv[Map[String, String]](BasicContext.FLAG_API_QUERY + code + "_" + item.item_code, callback)
+        EventBusProcessor.Async.consumerAdv[QueryReqDTO](BasicContext.FLAG_API_QUERY + code + "_" + item.item_code, callback)
     }
   }
 
