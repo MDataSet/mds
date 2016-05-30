@@ -3,7 +3,7 @@ package com.mdataset.worker.autoinfo
 import java.util.Date
 
 import com.ecfront.common.Resp
-import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceItemDTO}
+import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceItemDTO, QueryReqDTO}
 import com.mdataset.lib.worker.basic.MdsAdapter
 
 object ServiceAdapter extends MdsAdapter {
@@ -24,7 +24,7 @@ object ServiceAdapter extends MdsAdapter {
     Resp.success(null)
   }
 
-  override def query(itemCode: String, query: Map[String, String], source: MdsSourceItemDTO): Resp[(String, List[Any])] = {
+  override def query(itemCode: String, queryReq:QueryReqDTO, source: MdsSourceItemDTO): Resp[(String,List[Any])]={
     // TODO
     Resp.success("SELECT * FROM xx", List())
   }

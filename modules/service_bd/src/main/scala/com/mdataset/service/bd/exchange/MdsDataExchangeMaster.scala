@@ -4,7 +4,7 @@ import java.util.concurrent.CopyOnWriteArraySet
 
 import com.ecfront.common.Resp
 import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsQuerySqlReqDTO, MdsRegisterReqDTO}
-import com.mdataset.service.bd.MdsContext
+import com.mdataset.service.bd.model.MdsRegisterReqEntity
 import com.typesafe.scalalogging.slf4j.LazyLogging
 
 /**
@@ -19,16 +19,19 @@ trait MdsDataExchangeMaster extends LazyLogging {
     * 注册Worker响应
     */
   def registerResp(): Unit = {
+    MdsRegisterReqEntity.initCache()
     fetchRegisterResp({
       source =>
         val code = source.code
         logger.info(s"==Register== bd service response worker [$code] register.")
-        MdsContext.sources += code -> source
-        registerEntityMeta(source)
-        insertResp(code)
-        queryBySqlResp(code)
-        logger.info(s"==Register== worker [$code] successful.")
-        Resp.success(null)
+        val saveResp = MdsRegisterReqEntity.saveOrUpdateWithCache(source)
+        if (saveResp) {
+          registerEntityMeta(source)
+          insertResp(code)
+          queryBySqlResp(code)
+          logger.info(s"==Register== worker [$code] successful.")
+        }
+        saveResp
     })
   }
 
@@ -55,9 +58,11 @@ trait MdsDataExchangeMaster extends LazyLogging {
     fetchUnRegisterResp({
       code =>
         logger.info(s"==UnRegister== bd service response worker [$code] unRegister.")
-        MdsContext.sources -= code
-        logger.info(s"==UnRegister== worker [$code] successful.")
-        Resp.success(null)
+        val resp = MdsRegisterReqEntity.removeWithCache(code)
+        if (resp) {
+          logger.info(s"==UnRegister== worker [$code] successful.")
+        }
+        resp
     })
   }
 

@@ -1,5 +1,7 @@
 package com.mdataset.lib.basic.model
 
+import scala.beans.BeanProperty
+
 /**
   * 向BD Service注册时传输的对象
   *
@@ -14,8 +16,12 @@ case class MdsRegisterReqDTO(code: String, entityMeta: List[MdsRegisterEntityMet
   * @param name          entity name
   * @param fieldFamilies field Name  -> Family Name
   * @param fieldTypes    field Name -> scala type
-  */
-case class MdsRegisterEntityMetaDTO(name: String, fieldFamilies: Map[String, String], fieldTypes: Map[String, String])
+*/
+case class MdsRegisterEntityMetaDTO(
+                                     @BeanProperty var name: String,
+                                     @BeanProperty var fieldFamilies: Map[String, String],
+                                     @BeanProperty var fieldTypes: Map[String, String]
+                                   )
 
 /**
   * 向BD Service插入数据的请求对象

@@ -40,10 +40,8 @@ trait MdsAPIExchangeMaster extends LazyLogging {
           }
           pushProcess(code)
           logger.info(s"==Register== worker [$code] successful.")
-          Resp.success(null)
-        } else {
-          saveResp
         }
+        saveResp
     })
   }
 

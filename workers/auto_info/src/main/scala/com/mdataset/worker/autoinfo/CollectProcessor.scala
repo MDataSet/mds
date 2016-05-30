@@ -30,7 +30,7 @@ object CollectProcessor extends LazyLogging {
             $brand.select("dd").foreach {
               $company =>
                 val companyName = $company.select(".h3-tit").text()
-                val seriesObjects = $company.select("li:has(h4)").flatMap {
+                $company.select("li:has(h4)").foreach {
                   $series =>
                     val seriesId = $series.attr("id").replace("s", "")
                     val seriesName = $series.select("h4").text()
@@ -39,7 +39,7 @@ object CollectProcessor extends LazyLogging {
                     val detail = HttpHelper.get(seriesDetailUrl)
                     val $detail = Jsoup.parse(detail)
                     val configList = parseConfig(detail)
-                    configList.map {
+                    configList.foreach {
                       config =>
                         val modelAutoInfo = new ModelAutoInfo
                         try {
@@ -251,14 +251,13 @@ object CollectProcessor extends LazyLogging {
                           modelAutoInfo.tech_splitview = config.get("中控液晶屏分屏显示")
                           modelAutoInfo.tech_acc = config.get("自适应巡航")
                           modelAutoInfo.tech_pancam = config.get("全景摄像头")
+                          MdsWorkerBasicContext.dataExchangeWorker.insertReq(CollectProcessor.ITEM_CODE_MODEL,modelAutoInfo)
                         } catch {
                           case e: Throwable =>
                             logger.error("Process error.", e)
                         }
-                        modelAutoInfo
                     }
-                }.toList
-                MdsWorkerBasicContext.dataExchangeWorker.insertReq(seriesObjects)
+                }
             }
         }
     }
