@@ -6,6 +6,7 @@ import com.ecfront.common.Resp
 import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsQueryORPushRespDTO, MdsSourceMainDTO, QueryReqDTO}
 import com.mdataset.service.api.MdsContext
 import com.mdataset.service.api.export.query.SocketAPI
+import com.mdataset.service.api.model.MdsSourceMainEntity
 import com.mdataset.service.api.process.{MdsCollectExecScheduleJob, MdsLimitProcessor}
 import com.typesafe.scalalogging.slf4j.LazyLogging
 
@@ -21,23 +22,28 @@ trait MdsAPIExchangeMaster extends LazyLogging {
     * 注册Worker响应
     */
   def registerResp(): Unit = {
+    MdsSourceMainEntity.initCache()
     fetchRegisterResp({
       source =>
         val code = source.code
         logger.info(s"==Register== api service response worker [$code] register.")
-        MdsContext.sources += code -> source.items.map(i => i.item_code -> i).toMap
-        MdsContext.sources(code).values.foreach {
-          item =>
-            val itemCode = item.item_code
-            // 为每个数据项添加调度任务
-            MdsCollectExecScheduleJob.add(code, itemCode, item.collect_exec_schedule)
-            MdsCollectExecScheduleJob.add(code, itemCode, item.collect_exec_schedule)
-            // 添加查询限制
-            MdsLimitProcessor.addCounter(code, item)
+        val saveResp = MdsSourceMainEntity.saveOrUpdateWithCache(source)
+        if (saveResp) {
+          MdsContext.sources(code).values.foreach {
+            item =>
+              val itemCode = item.item_code
+              // 为每个数据项添加调度任务
+              MdsCollectExecScheduleJob.add(code, itemCode, item.collect_exec_schedule)
+              MdsCollectExecScheduleJob.add(code, itemCode, item.collect_exec_schedule)
+              // 添加查询限制
+              MdsLimitProcessor.addCounter(code, item)
+          }
+          pushProcess(code)
+          logger.info(s"==Register== worker [$code] successful.")
+          Resp.success(null)
+        } else {
+          saveResp
         }
-        pushProcess(code)
-        logger.info(s"==Register== worker [$code] successful.")
-        Resp.success(null)
     })
   }
 
@@ -55,9 +61,11 @@ trait MdsAPIExchangeMaster extends LazyLogging {
     fetchUnRegisterResp({
       code =>
         logger.info(s"==UnRegister== api service response worker [$code] unRegister.")
-        MdsContext.sources -= code
-        logger.info(s"==UnRegister== worker [$code] successful.")
-        Resp.success(null)
+        val resp = MdsSourceMainEntity.removeWithCache(code)
+        if (resp) {
+          logger.info(s"==UnRegister== worker [$code] successful.")
+        }
+        resp
     })
   }
 

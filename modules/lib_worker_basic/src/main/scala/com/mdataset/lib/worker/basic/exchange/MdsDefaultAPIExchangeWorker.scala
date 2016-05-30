@@ -14,13 +14,11 @@ import com.mdataset.lib.worker.basic.MdsWorkerBasicContext
 object MdsDefaultAPIExchangeWorker extends MdsAPIExchangeWorker {
 
   override protected def fetchRegisterReq(source: MdsSourceMainDTO): Resp[Void] = {
-    EventBusProcessor.send(BasicContext.FLAG_API_REGISTER, source)
-    Resp.success(null)
+    EventBusProcessor.sendWithReply[Resp[Void]](BasicContext.FLAG_API_REGISTER, source)._1
   }
 
   override protected def fetchUnRegisterReq(code: String): Resp[Void] = {
-    EventBusProcessor.send(BasicContext.FLAG_API_UN_REGISTER, code)
-    Resp.success(null)
+    EventBusProcessor.sendWithReply[Resp[Void]](BasicContext.FLAG_API_UN_REGISTER, code)._1
   }
 
   override protected def fetchCollectExecResp(code: String, callback: (MdsCollectStatusDTO, (Resp[MdsCollectStatusDTO]) => Unit) => Unit): Unit = {

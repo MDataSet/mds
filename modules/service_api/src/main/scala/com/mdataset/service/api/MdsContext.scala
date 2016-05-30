@@ -10,11 +10,9 @@ import com.mdataset.service.api.exchange.MdsDefaultAPIExchangeMaster
 object MdsContext {
 
   // 各Worker数据源集合
-  // TODO 持久化
   val sources: collection.mutable.Map[String, Map[String, MdsSourceItemDTO]] = collection.mutable.Map[String, Map[String, MdsSourceItemDTO]]()
 
   // Worker交互实现
-  // TODO config
   val apiExchangeMaster = MdsDefaultAPIExchangeMaster
 
   val socketPort = EZContext.args.getJsonObject("socket").getInteger("port")

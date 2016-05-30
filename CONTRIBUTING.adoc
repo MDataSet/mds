@@ -1,15 +1,5 @@
 == Contributing
 
-==== Environment
-
-. JDK 1.8
-. Scala 2.10 & 2.11
-. Mongo 3.x
-. Redis 3.x
-. Spark 1.x
-. Hadoop 2.x
-. HBase 1.x
-
 ==== Build
 
 . `git clone https://github.com/MDataSet/mds.git`

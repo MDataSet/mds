@@ -37,7 +37,7 @@
         {
           "item_code": "model",
           "desc": "车型数据",
-          "query_push_resp_format": [
+          "query_req_format": [
             {
               "field": "",
               "default_value": "",
@@ -46,16 +46,7 @@
               "necessary": ""
             }
           ],
-          "query_pull_req_format": [
-            {
-              "field": "",
-              "default_value": "",
-              "data_type": "",
-              "desc": "",
-              "necessary": ""
-            }
-          ],
-          "query_pull_resp_format": [
+          "query_resp_format": [
             {
               "field": "",
               "default_value": "",
