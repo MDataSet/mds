@@ -4,7 +4,7 @@ import com.ecfront.common.{JsonHelper, Resp}
 import com.ecfront.ez.framework.service.eventbus.EventBusProcessor
 import com.ecfront.ez.framework.service.kafka.KafkaProcessor
 import com.mdataset.lib.basic.BasicContext
-import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsQuerySqlReqDTO, MdsRegisterReqDTO}
+import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsQuerySqlReqDTO, MdsRegisterEntityReqDTO}
 import com.mdataset.lib.worker.basic.MdsWorkerBasicContext
 
 /**
@@ -18,7 +18,7 @@ object MdsDefaultDataExchangeWorker extends MdsDataExchangeWorker {
     BasicContext.FLAG_DATA_INSERT + MdsWorkerBasicContext.source.code,
     BasicContext.FLAG_DATA_INSERT + MdsWorkerBasicContext.source.code)
 
-  override protected def fetchRegisterReq(source: MdsRegisterReqDTO): Resp[Void] = {
+  override protected def fetchRegisterReq(source: MdsRegisterEntityReqDTO): Resp[Void] = {
     EventBusProcessor.send(BasicContext.FLAG_DATA_REGISTER, source)
     Resp.success(null)
   }

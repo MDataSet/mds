@@ -3,7 +3,7 @@ package com.mdataset.service.bd.exchange
 import java.util.concurrent.CopyOnWriteArraySet
 
 import com.ecfront.common.Resp
-import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsQuerySqlReqDTO, MdsRegisterReqDTO}
+import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsQuerySqlReqDTO, MdsRegisterEntityReqDTO}
 import com.mdataset.service.bd.model.MdsRegisterReqEntity
 import com.typesafe.scalalogging.slf4j.LazyLogging
 
@@ -40,14 +40,14 @@ trait MdsDataExchangeMaster extends LazyLogging {
     *
     * @param callback 收到消息后的处理方法
     */
-  protected def fetchRegisterResp(callback: MdsRegisterReqDTO => Resp[Void]): Unit
+  protected def fetchRegisterResp(callback: MdsRegisterEntityReqDTO => Resp[Void]): Unit
 
   /**
     * 注册（创建）实体到数据库
     *
     * @param source 注册请求对象
     */
-  private def registerEntityMeta(source: MdsRegisterReqDTO): Unit = {
+  private def registerEntityMeta(source: MdsRegisterEntityReqDTO): Unit = {
     // TODO create table
   }
 

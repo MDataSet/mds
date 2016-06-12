@@ -6,14 +6,14 @@ import com.ecfront.ez.framework.service.eventbus.EventBusProcessor
 import com.ecfront.ez.framework.service.kafka.KafkaProcessor
 import com.ecfront.ez.framework.service.kafka.KafkaProcessor.Producer
 import com.mdataset.lib.basic.BasicContext
-import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsQueryORPushRespDTO, MdsQuerySqlReqDTO, MdsRegisterReqDTO}
+import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsQueryORPushRespDTO, MdsQuerySqlReqDTO, MdsRegisterEntityReqDTO}
 
 object MdsDefaultDataExchangeMaster extends MdsDataExchangeMaster {
 
   private val producers = collection.mutable.Map[String, collection.mutable.Map[String, Producer]]()
 
-  override protected def fetchRegisterResp(callback: MdsRegisterReqDTO => Resp[Void]): Unit = {
-    EventBusProcessor.Async.consumerAdv[MdsRegisterReqDTO](BasicContext.FLAG_DATA_REGISTER, {
+  override protected def fetchRegisterResp(callback: MdsRegisterEntityReqDTO => Resp[Void]): Unit = {
+    EventBusProcessor.Async.consumerAdv[MdsRegisterEntityReqDTO](BasicContext.FLAG_DATA_REGISTER, {
       (source, reply) =>
         reply(callback(source))
     })

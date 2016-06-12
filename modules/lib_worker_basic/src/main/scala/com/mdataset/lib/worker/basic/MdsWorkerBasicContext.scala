@@ -1,5 +1,6 @@
 package com.mdataset.lib.worker.basic
 
+import com.mdataset.excavator.core.ENode
 import com.mdataset.lib.basic.model.MdsSourceMainDTO
 import com.mdataset.lib.worker.basic.exchange.{MdsDefaultAPIExchangeWorker, MdsDefaultDataExchangeWorker}
 
@@ -18,4 +19,5 @@ object MdsWorkerBasicContext {
   // BD Service交互实现
   lazy val dataExchangeWorker = MdsDefaultDataExchangeWorker
 
+  var excavator:ENode=_
 }

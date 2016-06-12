@@ -3,7 +3,7 @@ package com.mdataset.service.bd.model
 import com.ecfront.common.{BeanHelper, Resp}
 import com.ecfront.ez.framework.service.storage.foundation._
 import com.ecfront.ez.framework.service.storage.mongo.MongoStatusStorage
-import com.mdataset.lib.basic.model.{MdsRegisterEntityMetaDTO, MdsRegisterReqDTO}
+import com.mdataset.lib.basic.model.{MdsRegisterEntityMetaDTO, MdsRegisterEntityReqDTO}
 import com.mdataset.service.bd.MdsContext
 
 import scala.beans.BeanProperty
@@ -29,11 +29,11 @@ object MdsRegisterReqEntity extends MongoStatusStorage[MdsRegisterReqEntity] {
     MdsRegisterReqEntity.findEnabled("").body.foreach {
       source =>
         val code = source.code
-        MdsContext.sources += code -> MdsRegisterReqDTO(source.code, source.entityMeta)
+        MdsContext.sources += code -> MdsRegisterEntityReqDTO(source.code, source.entityMeta)
     }
   }
 
-  def saveOrUpdateWithCache(source: MdsRegisterReqDTO): Resp[Void] = {
+  def saveOrUpdateWithCache(source: MdsRegisterEntityReqDTO): Resp[Void] = {
     val code = source.code
     if (MdsContext.sources.contains(code) && MdsContext.sources(code).hashCode() != source.hashCode()) {
       Resp.conflict("数据源code重复")

@@ -1,7 +1,7 @@
 package com.mdataset.lib.worker.basic.exchange
 
 import com.ecfront.common.{JsonHelper, Resp}
-import com.mdataset.lib.basic.model.{MdsBaseEntity, MdsRegisterReqDTO}
+import com.mdataset.lib.basic.model.{MdsBaseEntity, MdsRegisterEntityReqDTO}
 import com.mdataset.lib.worker.basic.MdsWorkerBasicContext
 
 /**
@@ -14,7 +14,7 @@ trait MdsDataExchangeWorker extends MdsExchangeWorker {
     *
     * @param source BD注册请求对象
     */
-  def registerReq(source: MdsRegisterReqDTO): Unit = {
+  def registerReq(source: MdsRegisterEntityReqDTO): Unit = {
     logger.info(s"==Register== worker [${MdsWorkerBasicContext.source.code}] request bd register.")
     fetchRegisterReq(source)
   }
@@ -25,7 +25,7 @@ trait MdsDataExchangeWorker extends MdsExchangeWorker {
     * @param source BD注册请求对象
     * @return 是否成功
     */
-  protected def fetchRegisterReq(source: MdsRegisterReqDTO): Resp[Void]
+  protected def fetchRegisterReq(source: MdsRegisterEntityReqDTO): Resp[Void]
 
   /**
     * 插入数据请求

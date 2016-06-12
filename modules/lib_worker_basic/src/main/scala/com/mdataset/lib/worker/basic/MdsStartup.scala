@@ -3,11 +3,14 @@ package com.mdataset.lib.worker.basic
 import com.ecfront.common.{BeanHelper, ClassScanHelper, JsonHelper}
 import com.ecfront.ez.framework.core.{EZContext, EZManager}
 import com.ecfront.ez.framework.service.distributed.DMonitorService
+import com.mdataset.excavator.Excavator
+import com.mdataset.excavator.http.{HttpProxy, UserAgent}
 import com.mdataset.lib.basic.model._
-import com.mdataset.lib.worker.basic.annotation.{Entity, Family}
+import com.mdataset.lib.worker.basic.annotation.{BDEntity, Family}
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import io.vertx.core.json.JsonObject
 
+import scala.collection.JavaConversions._
 import scala.reflect.runtime._
 
 /**
@@ -55,7 +58,7 @@ object MdsStartup extends LazyLogging {
           if (initR) {
             // 要注册的实体类meta信息
             val entities =
-              ClassScanHelper.scan[Entity](basePath).map {
+              ClassScanHelper.scan[BDEntity](basePath).map {
                 clazz =>
                   val tableName = clazz.getSimpleName.toLowerCase
                   val fieldTypes = BeanHelper.findFields(clazz)
@@ -66,11 +69,19 @@ object MdsStartup extends LazyLogging {
                   MdsRegisterEntityMetaDTO(tableName, fieldFamilies, fieldTypes)
               }
             // 启用各类交互接口
-            MdsWorkerBasicContext.dataExchangeWorker.registerReq(MdsRegisterReqDTO(MdsWorkerBasicContext.source.code, entities))
+            MdsWorkerBasicContext.dataExchangeWorker.registerReq(MdsRegisterEntityReqDTO(MdsWorkerBasicContext.source.code, entities))
             MdsWorkerBasicContext.apiExchangeWorker.registerReq(MdsWorkerBasicContext.source)
             MdsWorkerBasicContext.apiExchangeWorker.collectExecResp(MdsWorkerBasicContext.source.code)
             MdsWorkerBasicContext.apiExchangeWorker.collectTestResp(MdsWorkerBasicContext.source.code)
             MdsWorkerBasicContext.apiExchangeWorker.queryResp(MdsWorkerBasicContext.source.code)
+            // 加载挖掘工具
+            loadExcavator(
+              if (EZContext.args.containsKey("excavator")) {
+                EZContext.args.getJsonObject("excavator")
+              } else {
+                null
+              }
+            )
             // 启动心跳服务
             DMonitorService.start()
             logger.info(s"==Startup== worker [${MdsWorkerBasicContext.source.code}] startup.")
@@ -116,6 +127,20 @@ object MdsStartup extends LazyLogging {
         if (item.ext_info == null) {
           item.ext_info = JsonHelper.toObject[Map[String, String]](sourceJson.getJsonObject("ext_info", new JsonObject()).encode())
         }
+    }
+  }
+
+  private def loadExcavator(excavatorConf: JsonObject): Unit = {
+    val excavator = Excavator.userAgents(List(
+      UserAgent.CHROME,
+      UserAgent.IE11,
+      UserAgent.EGDE
+    ))
+    MdsWorkerBasicContext.excavator = if (excavatorConf == null) {
+      excavator.start()
+    } else {
+      val proxies = excavatorConf.getJsonArray("proxies").getList.map(JsonHelper.toObject[HttpProxy]).toList
+      excavator.proxies(proxies).start()
     }
   }
 

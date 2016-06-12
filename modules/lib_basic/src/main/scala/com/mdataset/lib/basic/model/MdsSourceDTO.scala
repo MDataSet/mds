@@ -8,13 +8,10 @@ import scala.beans.BeanProperty
   * 一个worker只能有一个主体数据源
   */
 class MdsSourceMainDTO {
-
   // code，不同数据源不能重复
-  // TODO 重复检查
   @BeanProperty var code: String = _
   // 数据源项目
   @BeanProperty var items: List[MdsSourceItemDTO] = _
-
 }
 
 /**
@@ -25,9 +22,7 @@ class MdsSourceMainDTO {
   * 如某worker是处理汽车数据的，它可以有 车型数据、经销商数据 等不同项目
   */
 class MdsSourceItemDTO {
-
   // item code 同一个数据源中不能重复
-  // TODO 重复检查
   @BeanProperty var item_code: String = _
   // 所属类别，按行业划分
   // TODO 建立类别字典
@@ -52,7 +47,6 @@ class MdsSourceItemDTO {
   @BeanProperty var desc: String = _
   // 扩展信息
   @BeanProperty var ext_info: Map[String, String] = _
-
 }
 
 

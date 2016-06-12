@@ -8,7 +8,7 @@ import scala.beans.BeanProperty
   * @param code       数据源code
   * @param entityMeta 实体信息
   */
-case class MdsRegisterReqDTO(code: String, entityMeta: List[MdsRegisterEntityMetaDTO])
+case class MdsRegisterEntityReqDTO(code: String, entityMeta: List[MdsRegisterEntityMetaDTO])
 
 /**
   * 实体信息

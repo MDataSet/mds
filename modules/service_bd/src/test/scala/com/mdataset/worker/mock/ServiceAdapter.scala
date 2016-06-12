@@ -4,7 +4,7 @@ import java.util.Date
 
 import com.ecfront.common.Resp
 import com.mdataset.lib.basic.model.{MdsBaseEntity, MdsCollectStatusDTO, MdsSourceItemDTO, QueryReqDTO}
-import com.mdataset.lib.worker.basic.annotation.{Entity, Family}
+import com.mdataset.lib.worker.basic.annotation.{BDEntity, Family}
 import com.mdataset.lib.worker.basic.{MdsAdapter, MdsWorkerBasicContext}
 
 import scala.beans.BeanProperty
@@ -32,7 +32,7 @@ object ServiceAdapter extends MdsAdapter {
 
 }
 
-@Entity()
+@BDEntity()
 class Model extends MdsBaseEntity {
 
   @Family("")

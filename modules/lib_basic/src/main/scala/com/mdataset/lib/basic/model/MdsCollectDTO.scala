@@ -32,5 +32,4 @@ class MdsCollectStatusDTO {
   @BeanProperty var info: Map[String, Any] = _
   // 最后一次更新时间
   @BeanProperty var last_update_time: Date = _
-
 }
