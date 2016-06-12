@@ -1,6 +1,6 @@
 package com.mdataset.worker.autoinfo
 
-import com.ecfront.common.Resp
+import com.ecfront.common.{JsonHelper, Resp}
 import com.fasterxml.jackson.databind.JsonNode
 import com.mdataset.lib.worker.basic.MdsWorkerBasicContext
 import com.mdataset.worker.autoinfo.model.ModelAutoInfo
@@ -26,8 +26,7 @@ object CollectProcessor extends LazyLogging {
                   .text("seriesId", _.attr("id").replace("s", ""))
                   // 2. 车系配置详细页面 例如：http://car.autohome.com.cn/config/series/467.html
                   .go("model", "http://car.autohome.com.cn/config/series/{seriesId}.html")(
-                  _.text("modelName", ".subnav-title-name h1")
-                    .json("config", "config", _.get("result").get("paramtypeitems"))
+                    _.json("config", "config", _.get("result").get("paramtypeitems"))
                     .json("option", "option", _.get("result").get("configtypeitems"))
                     .process({
                       jsonConfig =>
@@ -36,9 +35,9 @@ object CollectProcessor extends LazyLogging {
                           modelAutoInfo.brand_name = jsonConfig.get("brandName").asText()
                           modelAutoInfo.company_name = jsonConfig.get("companyName").asText()
                           modelAutoInfo.series_name = jsonConfig.get("seriesName").asText()
-                          modelAutoInfo.model_name = jsonConfig.get("modelName").asText()
                           parseConfig(jsonConfig.get("config"), jsonConfig.get("option")).foreach {
                             config =>
+                              modelAutoInfo.model_name = config.get("车型名称")
                               val companyPrices = config.get("厂商指导价(元)").replace("万", "").split("~")
                               modelAutoInfo.company_price_min = companyPrices(0)
                               modelAutoInfo.company_price_min = if (companyPrices.length == 2) companyPrices(1) else companyPrices(0)
@@ -242,7 +241,9 @@ object CollectProcessor extends LazyLogging {
                               modelAutoInfo.tech_splitview = config.get("中控液晶屏分屏显示")
                               modelAutoInfo.tech_acc = config.get("自适应巡航")
                               modelAutoInfo.tech_pancam = config.get("全景摄像头")
-                              MdsWorkerBasicContext.dataExchangeWorker.insertReq(CollectProcessor.ITEM_CODE_MODEL, modelAutoInfo)
+                             // println(JsonHelper.toJson(modelAutoInfo))
+                                println(s"""("${modelAutoInfo.brand_name}","${modelAutoInfo.company_name}","${modelAutoInfo.series_name}","${modelAutoInfo.model_name}","${modelAutoInfo.basic_structure}","${modelAutoInfo.basic_engine}","${modelAutoInfo.basic_transmission_box}","${modelAutoInfo.basic_volume}","${modelAutoInfo.basic_warranty}")""")
+                            // MdsWorkerBasicContext.dataExchangeWorker.insertReq(CollectProcessor.ITEM_CODE_MODEL, modelAutoInfo)
                           }
                         } catch {
                           case e: Throwable =>
@@ -258,7 +259,7 @@ object CollectProcessor extends LazyLogging {
   }
 
   private def parseConfig(config: JsonNode, option: JsonNode): List[ConfigOpt] = {
-    if (config.isEmpty) {
+    if (config == null || config.size() == 0) {
       // 此车系没有配置信息
       List()
     } else {

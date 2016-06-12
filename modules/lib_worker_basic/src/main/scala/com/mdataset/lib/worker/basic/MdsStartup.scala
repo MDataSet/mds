@@ -36,7 +36,7 @@ object MdsStartup extends LazyLogging {
     if (EZManager.start()) {
       val basePath = s"com.mdataset.worker.${EZContext.module}"
       try {
-        if (serviceAdapter != null) {
+        if (serviceAdapter == null) {
           val adapterStr = s"$basePath.ServiceAdapter$$"
           MdsWorkerBasicContext.adapter = runtimeMirror.reflectModule(runtimeMirror.staticModule(adapterStr)).instance.asInstanceOf[MdsAdapter]
         } else {

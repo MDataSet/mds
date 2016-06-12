@@ -1,35 +1,66 @@
 {
   "ez": {
-    "app": "mds",
-    "module": "startup",
-    "language": "zh-CN",
+    "app": "mds-worker",
+    "module": "autoinfo",
     "services": {
-      "rpc.http": {
-        "servicePath": "com.mdataset.startup.api",
-        "host": "0.0.0.0",
-        "port": 8080,
-        "monitor": {
-          "slow": {
-            "time": 1000
-          }
-        }
-      },
-      "rpc.websocket": {
-        "servicePath": "com.mdataset.startup.api",
-        "host": "0.0.0.0",
-        "port": 8081
-      },
-      "storage.mongo": {
+      "distributed": {},
+      "eventbus": {},
+      "redis": {
         "host": "192.168.99.100",
-        "port": 27017,
-        "db_name": "mds"
+        "port": 6379,
+        "auth": "",
+        "db": 0
       },
-      "scheduler": {
-        "storage": "mongo"
-      },
-      "distributed": {}
+      "kafka": {
+        "brokerList": "192.168.99.100:9092"
+      }
     }
   },
   "args": {
+    "source": {
+      "category": "auto",
+      "data_source": "autohome.com.cn",
+      "collect_auth": {
+        "user_name": "",
+        "password": "",
+        "account_token": "",
+        "ssh_key": ""
+      },
+      "query_limit": {
+        "hourly_rate": 0
+      },
+      "ext_info": {
+      },
+      "collect_exec_schedule": "0 0 0 /1 * ?",
+      "collect_test_schedule": "0 0 0 /10 * ?",
+      "items": [
+        {
+          "item_code": "model",
+          "desc": "车型数据",
+          "query_format": [
+            {
+              "field": "",
+              "default_value": "",
+              "data_type": "",
+              "desc": "",
+              "necessary": ""
+            }
+          ]
+        },
+        {
+          "item_code": "dealer",
+          "desc": "经销商数据",
+          "query_format": [
+            {
+              "field": "",
+              "default_value": "",
+              "data_type": "",
+              "desc": "",
+              "necessary": ""
+            }
+          ]
+        }
+      ]
+    }
   }
 }

@@ -4,7 +4,7 @@ import com.ecfront.common.{JsonHelper, Resp}
 import com.ecfront.ez.framework.service.eventbus.EventBusProcessor
 import com.ecfront.ez.framework.service.kafka.KafkaProcessor
 import com.mdataset.lib.basic.BasicContext
-import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsQuerySqlReqDTO, MdsRegisterEntityReqDTO}
+import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsRegisterEntityReqDTO}
 import com.mdataset.lib.worker.basic.MdsWorkerBasicContext
 
 /**
@@ -14,7 +14,7 @@ import com.mdataset.lib.worker.basic.MdsWorkerBasicContext
   */
 object MdsDefaultDataExchangeWorker extends MdsDataExchangeWorker {
 
-  private val insertProducer = KafkaProcessor.Producer(
+  private lazy val insertProducer = KafkaProcessor.Producer(
     BasicContext.FLAG_DATA_INSERT + MdsWorkerBasicContext.source.code,
     BasicContext.FLAG_DATA_INSERT + MdsWorkerBasicContext.source.code)
 

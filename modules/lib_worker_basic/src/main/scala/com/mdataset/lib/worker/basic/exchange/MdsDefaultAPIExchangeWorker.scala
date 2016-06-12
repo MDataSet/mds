@@ -3,7 +3,7 @@ package com.mdataset.lib.worker.basic.exchange
 import com.ecfront.common.Resp
 import com.ecfront.ez.framework.service.eventbus.EventBusProcessor
 import com.mdataset.lib.basic.BasicContext
-import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceMainDTO, QueryReqDTO}
+import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceMainDTO}
 import com.mdataset.lib.worker.basic.MdsWorkerBasicContext
 
 /**

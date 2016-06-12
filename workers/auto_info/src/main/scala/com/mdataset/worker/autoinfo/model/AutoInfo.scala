@@ -91,7 +91,7 @@ class ModelAutoInfo extends MdsBaseEntity {
   // 最大马力(Ps)
   @BeanProperty var engine_max_hp: Long = _
   // 最大功率(kW)
-  @BeanProperty var engine_max_power: Long = _
+  @BeanProperty var engine_max_power: Float = _
   // 最大功率转速(rpm)
   @BeanProperty var engine_max_power_speed: Long = _
   // 最大扭矩(N·m)
@@ -116,7 +116,7 @@ class ModelAutoInfo extends MdsBaseEntity {
   // 变速箱
   @BeanProperty var gearbox_name: String = _
   // 挡位个数
-  @BeanProperty var gearbox_number: Long = _
+  @BeanProperty var gearbox_number: String = _
   // 变速箱类型
   @BeanProperty var gearbox_type: String = _
 
