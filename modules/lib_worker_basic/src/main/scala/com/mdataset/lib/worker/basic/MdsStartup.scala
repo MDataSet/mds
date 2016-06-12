@@ -8,7 +8,7 @@ import com.mdataset.excavator.http.{HttpProxy, UserAgent}
 import com.mdataset.lib.basic.model._
 import com.mdataset.lib.worker.basic.model.{BDEntity, Family}
 import com.typesafe.scalalogging.slf4j.LazyLogging
-import io.vertx.core.json.JsonObject
+import io.vertx.core.json.{JsonArray, JsonObject}
 
 import scala.collection.JavaConversions._
 import scala.reflect.runtime._
@@ -116,6 +116,9 @@ object MdsStartup extends LazyLogging {
         }
         if (item.collect_test_schedule == null) {
           item.collect_test_schedule = sourceJson.getString("collect_test_schedule", "")
+        }
+        if (item.query_format == null) {
+          item.query_format = JsonHelper.toObject[List[MdsQueryFormatDTO]](sourceJson.getJsonArray("query_format", new JsonArray()).encode())
         }
         if (item.collect_auth == null) {
           item.collect_auth = JsonHelper.toObject[MdsCollectAuthDTO](sourceJson.getJsonObject("collect_auth", new JsonObject()).encode())

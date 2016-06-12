@@ -3,7 +3,7 @@ package com.mdataset.worker.mock
 import java.util.Date
 
 import com.ecfront.common.Resp
-import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceItemDTO, QueryReqDTO}
+import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceItemDTO}
 import com.mdataset.lib.worker.basic.model.{BDEntity, Family, MdsBaseEntity}
 import com.mdataset.lib.worker.basic.{MdsAdapter, MdsWorkerBasicContext}
 
@@ -24,10 +24,6 @@ object ServiceAdapter extends MdsAdapter {
 
   override def collectTest(itemCode: String, source: MdsSourceItemDTO): Resp[Void] = {
     Resp.success(null)
-  }
-
-  override def query(itemCode: String, queryReq: QueryReqDTO, source: MdsSourceItemDTO): Resp[(String, List[Any])] = {
-    Resp.success("SELECT * FROM model", List())
   }
 
 }

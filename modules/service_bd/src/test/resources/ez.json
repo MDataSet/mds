@@ -26,9 +26,6 @@
         "account_token": "",
         "ssh_key": ""
       },
-      "query_limit": {
-        "hourly_rate": 0
-      },
       "ext_info": {
       },
       "collect_exec_schedule": "0 0 0 /1 * ?",
@@ -37,25 +34,7 @@
         {
           "item_code": "model",
           "desc": "some model",
-          "query_push_resp_format": [
-            {
-              "field": "",
-              "default_value": "",
-              "data_type": "",
-              "desc": "",
-              "necessary": ""
-            }
-          ],
-          "query_pull_req_format": [
-            {
-              "field": "",
-              "default_value": "",
-              "data_type": "",
-              "desc": "",
-              "necessary": ""
-            }
-          ],
-          "query_pull_resp_format": [
+          "query_format": [
             {
               "field": "",
               "default_value": "",
@@ -68,25 +47,7 @@
         {
           "item_code": "dealer",
           "desc": "some dealer",
-          "query_push_resp_format": [
-            {
-              "field": "",
-              "default_value": "",
-              "data_type": "",
-              "desc": "",
-              "necessary": ""
-            }
-          ],
-          "query_pull_req_format": [
-            {
-              "field": "",
-              "default_value": "",
-              "data_type": "",
-              "desc": "",
-              "necessary": ""
-            }
-          ],
-          "query_pull_resp_format": [
+          "query_format": [
             {
               "field": "",
               "default_value": "",

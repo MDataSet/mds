@@ -22,7 +22,7 @@ class SocketSpec extends MockStartupSpec {
               println(data)
             }
           })
-          socket.write(JsonHelper.toJsonString(QueryReqDTO("mock", "model", 20160501000000000L)))
+          socket.write("test")
         }
       })
     new CountDownLatch(1).await()
