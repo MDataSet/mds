@@ -1,7 +1,7 @@
 package com.mdataset.lib.worker.basic.exchange
 
 import com.ecfront.common.Resp
-import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceMainDTO, QueryReqDTO}
+import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceMainDTO}
 import com.mdataset.lib.worker.basic.MdsWorkerBasicContext
 
 /**
@@ -89,41 +89,6 @@ trait MdsAPIExchangeWorker extends MdsExchangeWorker {
     * @param callback 收到消息后的处理方法
     */
   protected def fetchCollectTestResp(code: String, callback: (String, Resp[Void] => Unit) => Unit): Unit
-
-  /**
-    * 查询响应
-    *
-    * @param code 数据源code
-    */
-  def queryResp(code: String): Unit = {
-    fetchQueryResp(code, {
-      (queryReq, reply) =>
-        logger.info(s"==Query== worker [${MdsWorkerBasicContext.source.code}] response query by client [${queryReq.clientId}].")
-        try {
-          val result = MdsWorkerBasicContext.adapter.query(
-            queryReq.sourceItemCode,
-            queryReq,
-            MdsWorkerBasicContext.source.items.find(_.item_code == queryReq.sourceItemCode).get)
-          if (result) {
-            MdsWorkerBasicContext.dataExchangeWorker.queryBySqlReq(queryReq.sourceItemCode, result.body._1, result.body._2, queryReq.clientId)
-          } else {
-            logger.error(s"Query error [${result.code}]:${result.message}")
-          }
-          reply(result)
-        } catch {
-          case e: Throwable =>
-            logger.error(s"Query error", e)
-        }
-    })
-  }
-
-  /**
-    * 查询响应消息实现
-    *
-    * @param code     数据源code
-    * @param callback 收到消息后的处理方法
-    */
-  protected def fetchQueryResp(code: String, callback: (QueryReqDTO, Resp[Void] => Unit) => Unit): Unit
 
 }
 

@@ -35,13 +35,5 @@ object MdsDefaultAPIExchangeWorker extends MdsAPIExchangeWorker {
     }
   }
 
-  override protected def fetchQueryResp(code: String, callback: (QueryReqDTO, Resp[Void] => Unit) => Unit): Unit = {
-    MdsWorkerBasicContext.source.items.foreach {
-      item =>
-        EventBusProcessor.Async.consumerAdv[QueryReqDTO](BasicContext.FLAG_API_QUERY + code + "_" + item.item_code, callback)
-    }
-  }
-
-
 }
 

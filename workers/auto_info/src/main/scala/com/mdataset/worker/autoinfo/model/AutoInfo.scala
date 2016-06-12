@@ -1,7 +1,6 @@
 package com.mdataset.worker.autoinfo.model
 
-import com.mdataset.lib.basic.model.MdsBaseEntity
-import com.mdataset.lib.worker.basic.annotation.BDEntity
+import com.mdataset.lib.worker.basic.model.{BDEntity, MdsBaseEntity}
 
 import scala.beans.BeanProperty
 

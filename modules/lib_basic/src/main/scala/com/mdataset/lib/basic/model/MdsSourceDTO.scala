@@ -35,14 +35,8 @@ class MdsSourceItemDTO {
   @BeanProperty var collect_test_schedule: String = _
   // 采集认证对象
   @BeanProperty var collect_auth: MdsCollectAuthDTO = _
-  // 推送响应格式
-  @BeanProperty var query_push_resp_format: List[MdsQueryFormatDTO] = _
-  // 查询请求格式
-  @BeanProperty var query_pull_req_format: List[MdsQueryFormatDTO] = _
-  // 查询响应格式
-  @BeanProperty var query_pull_resp_format: List[MdsQueryFormatDTO] = _
-  // 查询限制对象
-  @BeanProperty var query_limit: MdsQueryLimitDTO = _
+  // 响应格式
+  @BeanProperty var query_format: List[MdsQueryFormatDTO] = _
   // 数据描述
   @BeanProperty var desc: String = _
   // 扩展信息

@@ -3,7 +3,7 @@ package com.mdataset.service.bd.exchange
 import java.util.concurrent.CopyOnWriteArraySet
 
 import com.ecfront.common.Resp
-import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsQuerySqlReqDTO, MdsRegisterEntityReqDTO}
+import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsRegisterEntityReqDTO}
 import com.mdataset.service.bd.model.MdsRegisterReqEntity
 import com.typesafe.scalalogging.slf4j.LazyLogging
 
@@ -28,7 +28,6 @@ trait MdsDataExchangeMaster extends LazyLogging {
         if (saveResp) {
           registerEntityMeta(source)
           insertResp(code)
-          queryBySqlResp(code)
           logger.info(s"==Register== worker [$code] successful.")
         }
         saveResp
@@ -99,36 +98,5 @@ trait MdsDataExchangeMaster extends LazyLogging {
     * @param callback 收到消息后的处理方法
     */
   protected def fetchInsertResp(code: String, callback: MdsInsertReqDTO => Resp[Void]): Unit
-
-  /**
-    * 查询数据响应
-    *
-    * @param code 数据源code
-    */
-  def queryBySqlResp(code: String): Unit = {
-    synchronized {
-      if (!isInit.contains("queryBySqlResp_" + code)) {
-        fetchQueryBySqlResp(code, {
-          querySqlReq =>
-            logger.info(s"==Query== bd service response query from worker [${querySqlReq.code}].")
-            // TODO query
-            Resp.success(List(
-              s"""{"name":"a","age":20,"enable":true}""",
-              s"""{"name":"b","age":40,"enable":true}""",
-              s"""{"name":"c","age":20,"enable":false}"""
-            ))
-        })
-        isInit.add("queryBySqlResp_" + code)
-      }
-    }
-  }
-
-  /**
-    * 查询数据响应消息实现
-    *
-    * @param code     数据源code
-    * @param callback 收到消息后的处理方法
-    */
-  protected def fetchQueryBySqlResp(code: String, callback: MdsQuerySqlReqDTO => Resp[List[String]]): Unit
 
 }

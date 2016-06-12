@@ -3,7 +3,6 @@ package com.mdataset.worker.autoinfo
 import com.ecfront.common.Resp
 import com.fasterxml.jackson.databind.JsonNode
 import com.mdataset.lib.worker.basic.MdsWorkerBasicContext
-import com.mdataset.lib.worker.basic.helper.Charset
 import com.mdataset.worker.autoinfo.model.ModelAutoInfo
 import com.typesafe.scalalogging.slf4j.LazyLogging
 
@@ -11,10 +10,6 @@ import scala.collection.JavaConversions._
 import scala.language.implicitConversions
 
 object CollectProcessor extends LazyLogging {
-
-  private val baseUrl = "http://www.autohome.com.cn/"
-  private implicit val context = "text/html; charset=gb2312"
-  private implicit val charset = Charset.GB2312
 
   val ITEM_CODE_MODEL: String = "model"
 
@@ -42,7 +37,7 @@ object CollectProcessor extends LazyLogging {
                           modelAutoInfo.company_name = jsonConfig.get("companyName").asText()
                           modelAutoInfo.series_name = jsonConfig.get("seriesName").asText()
                           modelAutoInfo.model_name = jsonConfig.get("modelName").asText()
-                          parseConfig(jsonConfig.get("config"), jsonConfig.get("option")).foreach{
+                          parseConfig(jsonConfig.get("config"), jsonConfig.get("option")).foreach {
                             config =>
                               val companyPrices = config.get("厂商指导价(元)").replace("万", "").split("~")
                               modelAutoInfo.company_price_min = companyPrices(0)

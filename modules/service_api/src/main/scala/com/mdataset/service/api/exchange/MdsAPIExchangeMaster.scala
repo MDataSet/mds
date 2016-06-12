@@ -1,22 +1,16 @@
 package com.mdataset.service.api.exchange
 
-import java.util.concurrent.CopyOnWriteArraySet
-
 import com.ecfront.common.Resp
-import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsQueryORPushRespDTO, MdsSourceMainDTO, QueryReqDTO}
+import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceMainDTO}
 import com.mdataset.service.api.MdsContext
-import com.mdataset.service.api.export.query.SocketAPI
 import com.mdataset.service.api.model.MdsSourceMainEntity
-import com.mdataset.service.api.process.{MdsCollectExecScheduleJob, MdsLimitProcessor}
+import com.mdataset.service.api.process.MdsCollectExecScheduleJob
 import com.typesafe.scalalogging.slf4j.LazyLogging
 
 /**
   * Worker交互接口
   */
 trait MdsAPIExchangeMaster extends LazyLogging {
-
-  // 初始化记录，用于限制某些只能调用一次的方法，当值存在时不进入方法
-  private val isInit = new CopyOnWriteArraySet[String]()
 
   /**
     * 注册Worker响应
@@ -35,10 +29,7 @@ trait MdsAPIExchangeMaster extends LazyLogging {
               // 为每个数据项添加调度任务
               MdsCollectExecScheduleJob.add(code, itemCode, item.collect_exec_schedule)
               MdsCollectExecScheduleJob.add(code, itemCode, item.collect_exec_schedule)
-              // 添加查询限制
-              MdsLimitProcessor.addCounter(code, item)
           }
-          pushProcess(code)
           logger.info(s"==Register== worker [$code] successful.")
         }
         saveResp
@@ -113,57 +104,5 @@ trait MdsAPIExchangeMaster extends LazyLogging {
     * @param callback 收到消息后的处理方法
     */
   protected def fetchCollectTestReq(code: String, itemCode: String, callback: Resp[Void] => Unit): Unit
-
-  /**
-    * 查询请求
-    *
-    * @param req 查询请求对象
-    * @return 查询到的数据
-    */
-  def queryReq(req: QueryReqDTO): Unit = {
-    logger.info(s"==Query== api service request query to worker [${req.sourceCode}] by client [${req.clientId}].")
-    fetchQueryReq(req, {
-      resp =>
-        if (!resp) {
-          logger.error(s"Query error [${req.sourceCode}]-[${req.sourceItemCode}]-[${req.clientId}]")
-        }
-    })
-  }
-
-  /**
-    * 查询请求消息实现
-    *
-    * @param req 查询请求对象
-    * @return 查询到的数据
-    */
-  protected def fetchQueryReq(req: QueryReqDTO, callback: Resp[Void] => Unit): Unit
-
-  /**
-    * 推送处理
-    *
-    * @param code 数据源code
-    */
-  def pushProcess(code: String): Unit = {
-    synchronized {
-      if (!isInit.contains("pushResp_" + code)) {
-        fetchPushResp(code, {
-          pushResp =>
-            logger.info(s"==Push== api service response pull from worker [${pushResp.code}] by client [${pushResp.clientId}].")
-            // 使用Socket推送
-            SocketAPI.send(code, pushResp.itemCode, pushResp.clientId, pushResp.data)
-            Resp.success(null)
-        })
-        isInit.contains("pushResp_" + code)
-      }
-    }
-  }
-
-  /**
-    * 推送处理消息实现
-    *
-    * @param code     数据源code
-    * @param callback 收到消息后的处理方法
-    */
-  protected def fetchPushResp(code: String, callback: MdsQueryORPushRespDTO => Resp[Void]): Unit
 
 }

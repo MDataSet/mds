@@ -1,4 +1,4 @@
-package com.mdataset.lib.worker.basic.annotation
+package com.mdataset.lib.worker.basic.model
 
 import scala.annotation.StaticAnnotation
 

@@ -1,8 +1,9 @@
 package com.mdataset.lib.worker.basic.exchange
 
 import com.ecfront.common.{JsonHelper, Resp}
-import com.mdataset.lib.basic.model.{MdsBaseEntity, MdsRegisterEntityReqDTO}
+import com.mdataset.lib.basic.model.MdsRegisterEntityReqDTO
 import com.mdataset.lib.worker.basic.MdsWorkerBasicContext
+import com.mdataset.lib.worker.basic.model.MdsBaseEntity
 
 /**
   * BD Service交互接口
@@ -51,30 +52,5 @@ trait MdsDataExchangeWorker extends MdsExchangeWorker {
     * @return 是否成功
     */
   protected def fetchInsertReq(itemCode: String, data: String): Resp[Void]
-
-  /**
-    * 查询数据请求
-    *
-    * @param itemCode   数据项code
-    * @param sql        sql
-    * @param parameters 参数
-    * @param clientId   请求id
-    * @return 是否成功
-    */
-  def queryBySqlReq(itemCode: String, sql: String, parameters: List[Any], clientId: String = ""): Unit = {
-    logger.info(s"==Query== worker [${MdsWorkerBasicContext.source.code}] request query to bd service by client [$clientId].")
-    fetchQueryBySqlReq(itemCode, clientId, sql, parameters)
-  }
-
-  /**
-    * 查询数据请求消息实现
-    *
-    * @param itemCode   数据项code
-    * @param clientId   请求id
-    * @param sql        sql
-    * @param parameters 参数
-    * @return 查询到的数据
-    */
-  protected def fetchQueryBySqlReq(itemCode: String, clientId: String, sql: String, parameters: List[Any]): Resp[Void]
 
 }

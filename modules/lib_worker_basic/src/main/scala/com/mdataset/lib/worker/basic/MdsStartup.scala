@@ -6,7 +6,7 @@ import com.ecfront.ez.framework.service.distributed.DMonitorService
 import com.mdataset.excavator.Excavator
 import com.mdataset.excavator.http.{HttpProxy, UserAgent}
 import com.mdataset.lib.basic.model._
-import com.mdataset.lib.worker.basic.annotation.{BDEntity, Family}
+import com.mdataset.lib.worker.basic.model.{BDEntity, Family}
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import io.vertx.core.json.JsonObject
 
@@ -73,7 +73,6 @@ object MdsStartup extends LazyLogging {
             MdsWorkerBasicContext.apiExchangeWorker.registerReq(MdsWorkerBasicContext.source)
             MdsWorkerBasicContext.apiExchangeWorker.collectExecResp(MdsWorkerBasicContext.source.code)
             MdsWorkerBasicContext.apiExchangeWorker.collectTestResp(MdsWorkerBasicContext.source.code)
-            MdsWorkerBasicContext.apiExchangeWorker.queryResp(MdsWorkerBasicContext.source.code)
             // 加载挖掘工具
             loadExcavator(
               if (EZContext.args.containsKey("excavator")) {
@@ -120,9 +119,6 @@ object MdsStartup extends LazyLogging {
         }
         if (item.collect_auth == null) {
           item.collect_auth = JsonHelper.toObject[MdsCollectAuthDTO](sourceJson.getJsonObject("collect_auth", new JsonObject()).encode())
-        }
-        if (item.query_limit == null) {
-          item.query_limit = JsonHelper.toObject[MdsQueryLimitDTO](sourceJson.getJsonObject("query_limit", new JsonObject()).encode())
         }
         if (item.ext_info == null) {
           item.ext_info = JsonHelper.toObject[Map[String, String]](sourceJson.getJsonObject("ext_info", new JsonObject()).encode())

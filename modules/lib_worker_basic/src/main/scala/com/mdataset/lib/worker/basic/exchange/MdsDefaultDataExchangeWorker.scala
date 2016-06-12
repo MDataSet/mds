@@ -33,11 +33,5 @@ object MdsDefaultDataExchangeWorker extends MdsDataExchangeWorker {
     Resp.success(null)
   }
 
-  override protected def fetchQueryBySqlReq(itemCode: String, clientId: String, sql: String, parameters: List[Any]): Resp[Void] = {
-    val querySqlReq = JsonHelper.toJsonString(MdsQuerySqlReqDTO(MdsWorkerBasicContext.source.code, itemCode, clientId, sql, parameters))
-    EventBusProcessor.send(BasicContext.FLAG_DATA_QUERY_SQL_REQ + MdsWorkerBasicContext.source.code, querySqlReq)
-    Resp.success(null)
-  }
-
 }
 

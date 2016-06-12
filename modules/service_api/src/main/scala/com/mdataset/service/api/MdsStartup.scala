@@ -2,6 +2,7 @@ package com.mdataset.service.api
 
 import com.ecfront.ez.framework.core.EZManager
 import com.mdataset.service.api.export.query.SocketAPI
+import com.mdataset.service.api.process.QueryProcessor
 import com.typesafe.scalalogging.slf4j.LazyLogging
 
 /**

@@ -6,7 +6,7 @@ import com.ecfront.ez.framework.service.eventbus.EventBusProcessor
 import com.ecfront.ez.framework.service.kafka.KafkaProcessor
 import com.ecfront.ez.framework.service.kafka.KafkaProcessor.Producer
 import com.mdataset.lib.basic.BasicContext
-import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsQueryORPushRespDTO, MdsQuerySqlReqDTO, MdsRegisterEntityReqDTO}
+import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsRegisterEntityReqDTO}
 
 object MdsDefaultDataExchangeMaster extends MdsDataExchangeMaster {
 
@@ -27,32 +27,14 @@ object MdsDefaultDataExchangeMaster extends MdsDataExchangeMaster {
   }
 
   override protected def fetchInsertResp(code: String, callback: MdsInsertReqDTO => Resp[Void]): Unit = {
-    val producer = createAndGetProducer(code, BasicContext.FLAG_API_QUERY_OR_PUSH_RESP)
     KafkaProcessor.Consumer(BasicContext.FLAG_DATA_INSERT + code, EZContext.module).receive({
       (message, _) =>
         val insertReq = JsonHelper.toObject[MdsInsertReqDTO](message)
         val resp = callback(insertReq)
         if (resp) {
           logger.info(s"==Push== bd service request push from worker [${insertReq.code}].")
-          producer.send(JsonHelper.toJsonString(MdsQueryORPushRespDTO(insertReq.code, insertReq.itemCode, "", insertReq.data)))
         }
         resp
-    })
-  }
-
-  override protected def fetchQueryBySqlResp(code: String, callback: MdsQuerySqlReqDTO => Resp[List[String]]): Unit = {
-    val producer = createAndGetProducer(code, BasicContext.FLAG_API_QUERY_OR_PUSH_RESP)
-    EventBusProcessor.Async.consumerAdv[String](BasicContext.FLAG_DATA_QUERY_SQL_REQ + code, {
-      (message, _) =>
-        val querySqlReq = JsonHelper.toObject[MdsQuerySqlReqDTO](message)
-        val resp = callback(querySqlReq)
-        if (resp) {
-          resp.body.foreach {
-            data =>
-              logger.info(s"==Push== bd service request push from worker [${querySqlReq.code}].")
-              producer.send(JsonHelper.toJsonString(MdsQueryORPushRespDTO(querySqlReq.code, querySqlReq.itemCode, querySqlReq.clientId, data)))
-          }
-        }
     })
   }
 
@@ -66,5 +48,6 @@ object MdsDefaultDataExchangeMaster extends MdsDataExchangeMaster {
     }
     producers(code)(topicPrefix)
   }
+
 }
 

@@ -3,8 +3,8 @@ package com.mdataset.worker.mock
 import java.util.Date
 
 import com.ecfront.common.Resp
-import com.mdataset.lib.basic.model.{MdsBaseEntity, MdsCollectStatusDTO, MdsSourceItemDTO, QueryReqDTO}
-import com.mdataset.lib.worker.basic.annotation.{BDEntity, Family}
+import com.mdataset.lib.basic.model.{MdsCollectStatusDTO, MdsSourceItemDTO, QueryReqDTO}
+import com.mdataset.lib.worker.basic.model.{BDEntity, Family, MdsBaseEntity}
 import com.mdataset.lib.worker.basic.{MdsAdapter, MdsWorkerBasicContext}
 
 import scala.beans.BeanProperty

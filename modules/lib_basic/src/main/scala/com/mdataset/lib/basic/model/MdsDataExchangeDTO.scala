@@ -31,24 +31,3 @@ case class MdsRegisterEntityMetaDTO(
   * @param data     数据
   */
 case class MdsInsertReqDTO(code: String, itemCode: String, data: String)
-
-/**
-  * 向BD Service查询数据的请求对象
-  *
-  * @param code       数据源code
-  * @param itemCode   数据项code
-  * @param clientId   请求Id
-  * @param sql        sql
-  * @param parameters 参数
-  */
-case class MdsQuerySqlReqDTO(code: String, itemCode: String, clientId: String, sql: String, parameters: List[Any])
-
-/**
-  * 向API Service返回数据的响应对象
-  *
-  * @param code     数据源code
-  * @param itemCode 数据项code
-  * @param clientId 请求Id
-  * @param data     数据
-  */
-case class MdsQueryORPushRespDTO(code: String, itemCode: String, clientId: String, data: String)
