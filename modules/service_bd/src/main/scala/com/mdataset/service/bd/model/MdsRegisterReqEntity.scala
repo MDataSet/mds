@@ -12,6 +12,7 @@ import scala.beans.BeanProperty
   * 数据源主体实体对象
   *
   */
+@Entity("BD Register Request")
 class MdsRegisterReqEntity extends StatusModel {
 
   @Index
@@ -25,6 +26,8 @@ class MdsRegisterReqEntity extends StatusModel {
 
 object MdsRegisterReqEntity extends MongoStatusStorage[MdsRegisterReqEntity] {
 
+  super.customTableName("register_request")
+
   def initCache(): Unit = {
     MdsRegisterReqEntity.findEnabled("").body.foreach {
       source =>
@@ -35,19 +38,15 @@ object MdsRegisterReqEntity extends MongoStatusStorage[MdsRegisterReqEntity] {
 
   def saveOrUpdateWithCache(source: MdsRegisterEntityReqDTO): Resp[Void] = {
     val code = source.code
-    if (MdsContext.sources.contains(code) && MdsContext.sources(code).hashCode() != source.hashCode()) {
-      Resp.conflict("数据源code重复")
-    } else {
-      val sourceEntity = new MdsRegisterReqEntity
-      BeanHelper.copyProperties(sourceEntity, source)
-      val storageSource = MdsRegisterReqEntity.getEnabledByCond(s"""{"code":"$code"}""").body
-      if (storageSource != null) {
-        sourceEntity.id = storageSource.id
-      }
-      MdsRegisterReqEntity.saveOrUpdate(sourceEntity)
-      MdsContext.sources += code -> source
-      Resp.success(null)
+    val sourceEntity = new MdsRegisterReqEntity
+    BeanHelper.copyProperties(sourceEntity, source)
+    val storageSource = MdsRegisterReqEntity.getEnabledByCond(s"""{"code":"$code"}""").body
+    if (storageSource != null) {
+      sourceEntity.id = storageSource.id
     }
+    MdsRegisterReqEntity.saveOrUpdate(sourceEntity)
+    MdsContext.sources += code -> source
+    Resp.success(null)
   }
 
   def removeWithCache(code: String): Resp[Void] = {

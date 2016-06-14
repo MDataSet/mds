@@ -6,10 +6,11 @@
         </encoder>
     </appender>
 
-    <root level="TRACE">
+    <root level="WARN">
         <appender-ref ref="STDOUT"/>
     </root>
 
+    <logger name="com.mdataset" level="TRACE"/>
     <logger name="com.ecfront" level="TRACE"/>
 
 </configuration>

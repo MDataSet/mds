@@ -36,6 +36,8 @@ class MdsCollectStatusEntity extends SecureModel {
 
 object MdsCollectStatusEntity extends MongoSecureStorage[MdsCollectStatusEntity] {
 
+  super.customTableName("source_status")
+
   def getByCode(code: String, itemCode: String): MdsCollectStatusEntity = {
     MdsCollectStatusEntity.getByCond(s"""{"code":"$code","item_code":"$itemCode"}""").body
   }

@@ -17,6 +17,16 @@ trait MdsAPIExchangeMaster extends LazyLogging {
     */
   def registerResp(): Unit = {
     MdsSourceMainEntity.initCache()
+    MdsContext.sources.foreach {
+      source =>
+        val code = source._1
+        source._2.values.foreach {
+          item =>
+            val itemCode = item.item_code
+            MdsCollectExecScheduleJob.add(code, itemCode, item.collect_exec_schedule)
+            MdsCollectExecScheduleJob.add(code, itemCode, item.collect_exec_schedule)
+        }
+    }
     fetchRegisterResp({
       source =>
         val code = source.code

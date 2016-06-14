@@ -12,6 +12,7 @@ import scala.beans.BeanProperty
   * 数据源主体实体对象
   *
   */
+@Entity("Source")
 class MdsSourceMainEntity extends StatusModel {
 
   @Index
@@ -25,6 +26,8 @@ class MdsSourceMainEntity extends StatusModel {
 
 object MdsSourceMainEntity extends MongoStatusStorage[MdsSourceMainEntity] {
 
+  super.customTableName("source_main")
+
   def initCache(): Unit = {
     MdsSourceMainEntity.findEnabled("").body.foreach {
       source =>
@@ -36,21 +39,16 @@ object MdsSourceMainEntity extends MongoStatusStorage[MdsSourceMainEntity] {
 
   def saveOrUpdateWithCache(source: MdsSourceMainDTO): Resp[Void] = {
     val code = source.code
-    // 排重
     val value = source.items.map(i => i.item_code -> i).toMap
-    if (MdsContext.sources.contains(code) && MdsContext.sources(code).hashCode() != value.hashCode()) {
-      Resp.conflict("数据源code重复")
-    } else {
-      val sourceEntity = new MdsSourceMainEntity
-      BeanHelper.copyProperties(sourceEntity, source)
-      val storageSource = MdsSourceMainEntity.getEnabledByCond(s"""{"code":"$code"}""").body
-      if (storageSource != null) {
-        sourceEntity.id = storageSource.id
-      }
-      MdsSourceMainEntity.saveOrUpdate(sourceEntity)
-      MdsContext.sources += code -> value
-      Resp.success(null)
+    val sourceEntity = new MdsSourceMainEntity
+    BeanHelper.copyProperties(sourceEntity, source)
+    val storageSource = MdsSourceMainEntity.getEnabledByCond(s"""{"code":"$code"}""").body
+    if (storageSource != null) {
+      sourceEntity.id = storageSource.id
     }
+    MdsSourceMainEntity.saveOrUpdate(sourceEntity)
+    MdsContext.sources += code -> value
+    Resp.success(null)
   }
 
   def removeWithCache(code: String): Resp[Void] = {

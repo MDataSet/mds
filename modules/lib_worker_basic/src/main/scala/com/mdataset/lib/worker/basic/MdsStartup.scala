@@ -23,7 +23,7 @@ object MdsStartup extends LazyLogging {
   // 配置文件中source内容的字段名
   private val FLAG_SOURCE: String = "source"
 
-  def main(): Unit = {
+  def main(args:Array[String]): Unit = {
     init(null)
   }
 

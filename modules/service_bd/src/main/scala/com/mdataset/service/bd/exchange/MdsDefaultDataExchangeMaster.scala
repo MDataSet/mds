@@ -30,11 +30,7 @@ object MdsDefaultDataExchangeMaster extends MdsDataExchangeMaster {
     KafkaProcessor.Consumer(BasicContext.FLAG_DATA_INSERT + code, EZContext.module).receive({
       (message, _) =>
         val insertReq = JsonHelper.toObject[MdsInsertReqDTO](message)
-        val resp = callback(insertReq)
-        if (resp) {
-          logger.info(s"==Push== bd service request push from worker [${insertReq.code}].")
-        }
-        resp
+        callback(insertReq)
     })
   }
 

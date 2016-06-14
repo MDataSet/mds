@@ -7,7 +7,7 @@ import com.mdataset.lib.worker.basic.{MdsStartup, MdsWorkerBasicContext}
 /**
   * 测试基类
   */
-abstract class MdsBasicCollectSpec extends BasicSpec {
+abstract class MdsMockStartupSpec extends BasicSpec {
 
   before {
     MdsWorkerBasicContext.apiExchangeWorker = MdsMockAPIExchangeWorker

@@ -8,20 +8,30 @@ import scala.beans.BeanProperty
   * @param code       数据源code
   * @param entityMeta 实体信息
   */
-case class MdsRegisterEntityReqDTO(code: String, entityMeta: List[MdsRegisterEntityMetaDTO])
+case class MdsRegisterEntityReqDTO(@BeanProperty code: String,@BeanProperty entityMeta: List[MdsRegisterEntityMetaDTO])
 
 /**
   * 实体信息
-  *
-  * @param name          entity name
-  * @param fieldFamilies field Name  -> Family Name
-  * @param fieldTypes    field Name -> scala type
-*/
-case class MdsRegisterEntityMetaDTO(
-                                     @BeanProperty var name: String,
-                                     @BeanProperty var fieldFamilies: Map[String, String],
-                                     @BeanProperty var fieldTypes: Map[String, String]
-                                   )
+  */
+class MdsRegisterEntityMetaDTO {
+
+  @BeanProperty var name: String = _
+  @BeanProperty var fieldFamilies: Map[String, String] = _
+  @BeanProperty var fieldTypes: Map[String, String] = _
+
+}
+
+object MdsRegisterEntityMetaDTO {
+
+  def apply(name: String, fieldFamilies: Map[String, String], fieldTypes: Map[String, String]): MdsRegisterEntityMetaDTO = {
+    val dto = new MdsRegisterEntityMetaDTO()
+    dto.name = name
+    dto.fieldFamilies = fieldFamilies
+    dto.fieldTypes = fieldTypes
+    dto
+  }
+
+}
 
 /**
   * 向BD Service插入数据的请求对象

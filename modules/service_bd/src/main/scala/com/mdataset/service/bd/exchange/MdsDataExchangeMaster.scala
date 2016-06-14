@@ -4,6 +4,7 @@ import java.util.concurrent.CopyOnWriteArraySet
 
 import com.ecfront.common.Resp
 import com.mdataset.lib.basic.model.{MdsInsertReqDTO, MdsRegisterEntityReqDTO}
+import com.mdataset.service.bd.MdsContext
 import com.mdataset.service.bd.model.MdsRegisterReqEntity
 import com.typesafe.scalalogging.slf4j.LazyLogging
 
@@ -20,6 +21,11 @@ trait MdsDataExchangeMaster extends LazyLogging {
     */
   def registerResp(): Unit = {
     MdsRegisterReqEntity.initCache()
+    MdsContext.sources.foreach {
+      source =>
+        registerEntityMeta(source._2)
+        insertResp(source._1)
+    }
     fetchRegisterResp({
       source =>
         val code = source.code
@@ -47,6 +53,7 @@ trait MdsDataExchangeMaster extends LazyLogging {
     * @param source 注册请求对象
     */
   private def registerEntityMeta(source: MdsRegisterEntityReqDTO): Unit = {
+    println(source)
     // TODO create table
   }
 

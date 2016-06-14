@@ -1,7 +1,7 @@
 {
   "ez": {
     "app": "mds-worker",
-    "module": "mock",
+    "module": "test",
     "services": {
       "distributed": {},
       "eventbus": {},
@@ -18,7 +18,7 @@
   },
   "args": {
     "source": {
-      "category": "mock",
+      "category": "test",
       "data_source": "ecfront.com",
       "collect_auth": {
         "user_name": "",
@@ -32,7 +32,7 @@
       "collect_test_schedule": "0 0 0 /10 * ?",
       "items": [
         {
-          "item_code": "model",
+          "item_code": "item1",
           "desc": "some model",
           "query_format": [
             {
@@ -45,7 +45,7 @@
           ]
         },
         {
-          "item_code": "dealer",
+          "item_code": "item2",
           "desc": "some dealer",
           "query_format": [
             {

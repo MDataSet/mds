@@ -1,9 +1,9 @@
 package com.mdataset.worker
 
-import com.mdataset.lib.worker.basic.test.MdsBasicCollectSpec
+import com.mdataset.lib.worker.basic.test.MdsMockStartupSpec
 import com.mdataset.worker.autoinfo.CollectProcessor
 
-class CollectSpec extends MdsBasicCollectSpec {
+class CollectSpec extends MdsMockStartupSpec {
 
   test("collect test") {
     CollectProcessor.collectModel()

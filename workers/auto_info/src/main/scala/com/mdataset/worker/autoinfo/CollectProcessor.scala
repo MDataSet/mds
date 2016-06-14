@@ -241,9 +241,7 @@ object CollectProcessor extends LazyLogging {
                               modelAutoInfo.tech_splitview = config.get("中控液晶屏分屏显示")
                               modelAutoInfo.tech_acc = config.get("自适应巡航")
                               modelAutoInfo.tech_pancam = config.get("全景摄像头")
-                             // println(JsonHelper.toJson(modelAutoInfo))
-                                println(s"""("${modelAutoInfo.brand_name}","${modelAutoInfo.company_name}","${modelAutoInfo.series_name}","${modelAutoInfo.model_name}","${modelAutoInfo.basic_structure}","${modelAutoInfo.basic_engine}","${modelAutoInfo.basic_transmission_box}","${modelAutoInfo.basic_volume}","${modelAutoInfo.basic_warranty}")""")
-                            // MdsWorkerBasicContext.dataExchangeWorker.insertReq(CollectProcessor.ITEM_CODE_MODEL, modelAutoInfo)
+                              MdsWorkerBasicContext.dataExchangeWorker.insertReq(CollectProcessor.ITEM_CODE_MODEL, modelAutoInfo)
                           }
                         } catch {
                           case e: Throwable =>
